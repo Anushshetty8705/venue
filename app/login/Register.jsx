@@ -1,13 +1,13 @@
 "use client";
 import { Eye, EyeOff, Hash, KeyRound, Mail, User } from "lucide-react"; // added User + Lock icons
-import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa"; // SOCIAL PLATFORM FOR REGISTER
-import React, { useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react"; //SIGIN SIGOUT LOGIN
-import { useRouter } from "next/navigation";
+
+import React, { useState,useEffect } from "react";
+
+
 import { toast, Flip } from "react-toastify"; //TOAST
 
 const Register = () => {
-  const { data: session, status } = useSession(); //DATA FROM SOCIAL PLATFORM
+ 
   const [registerusername, setregisterusername] = useState(""); // FOR USER
   const [registeremail, setregisteremail] = useState(""); //FOR EMAIL
   const [registerpassword, setregisterpassword] = useState(""); //FOR PASSWORD
@@ -122,6 +122,7 @@ const sendOtp = async () => {
 
 // verify otp (✅ only set verifiedEmail if correct)
 const verifyOtp = async () => {
+  setotp(""); 
   if (otp.length === 6) {
     try {
       const res = await fetch("/api/verify-otp", {
@@ -161,15 +162,11 @@ const verifyOtp = async () => {
   }
 };
 
-  // CONTINUE WITH SOCIAL PALTFORM
-  const router = useRouter();
-  if (status === "loading") return null;
-  if (status === "authenticated") {
-    // router.push("/dashboard");
-   signOut("facebook");
-   signOut("google");
-    return null;
-  }
+  // CONTINUE WITH SOCIAL PLATFORM
+
+
+   
+  
 
   // SETTING FOR REGISTRION
   const registerconfirm = () => {
@@ -187,7 +184,7 @@ const verifyOtp = async () => {
       setregpasserror("* This field is required");
     }
     if (registeremail !== verifiedEmail) {
-      toast.error("Please verify your current email before registering ❌");
+      toast.warning("Please verify your current email before registering ❌");
       return; // stop registration
     }
 
@@ -195,20 +192,47 @@ const verifyOtp = async () => {
       registeremail.length > 8 &&
       registerusername.length > 8 &&
       registerpassword.length > 8 &&
-      registeremail.endsWith("@gmail.com") &&
-      verifiedEmail === registeremail
-    ) {
-      try {
-        toast.success("Registration sucessfull");
-      } catch {
-        toast.error("something went Wrong");
-      }
+      registeremail.endsWith("@gmail.com") 
+    ) 
+    // && verifiedEmail === registeremail
+    {
+      const toastId = toast.loading('Signing.....');
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "username": registerusername,
+      "password": registerpassword,
+      "email": registeremail
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch("/api/register", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result)
+        toast.dismiss(toastId);
+
+        if (result.error === "false") {
+          toast.success('Signing successfully!');
+       
+        } else {
+          toast.error(result.message || "Signup failed");
+        }
+      })
+      .catch((error) => console.error(error));
     }
   };
 
   return (
     <>
-      <div className="h-full w-1/2 flex flex-col items-center justify-center relative  gap-2 ">
+      <div className="h-full w-1/2 flex flex-col items-center justify-center relative  gap-2 animate-fade-in-up ">
         <div className="text-white text-3xl font-semibold mb-6 ">REGISTER</div>
         {/* USERNAME */}
         <div className="w-[80%] mb-4 relative">
@@ -329,34 +353,7 @@ const verifyOtp = async () => {
         >
           Register
         </button>
-        <div className="text-white/80 mb-5">or continue with</div>
-        <div>
-          {/* SOCIAL PALTFORM */}
-          {!session && (
-            <>
-              <div className=" flex items-center justify-center gap-5">
-                <button onClick={() => signIn("github")}>
-                  <FaGithub
-                    className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                    size={24}
-                  />
-                </button>
-                <button onClick={() => signIn("google")}>
-                  <FaGoogle
-                    className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                    size={24}
-                  />
-                </button>
-                <button onClick={() => signIn("facebook")}>
-                  <FaFacebookF
-                    className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                    size={24}
-                  />
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+       
       </div>
     </>
   );

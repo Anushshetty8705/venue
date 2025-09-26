@@ -17,6 +17,73 @@
     background-color: var(--color-neutral-600) /* oklch(43.9% 0 0) = #525252 */;
     opacity: 0.8;
 }
-.box{
-  box-shadow: 1px 5px 100px 5px transparent;
+
+@layer utilities {
+  @keyframes fade-in-center {
+    0% {
+      opacity: 0;
+      transform: translateX(0) scale(0.0);
+    }
+    
+    100% {
+      opacity: 1;
+      transform:translate3d(0) scale(1);
+    }
+  }
+
+  .animate-fade-in-center {
+    animation: fade-in-center 2s ease-in-out ;
+  }
+}
+@layer utilities {
+  @keyframes fade-in-center2 {
+    0% {
+      opacity: 0;
+      transform: translateX(0) scale(0.0);
+    }
+    
+    100% {
+      opacity: 1;
+      transform:translate3d(0) scale(1);
+    }
+  }
+
+  .animate-fade-in-center2 {
+    animation: fade-in-center 2s ease-in-out ;
+  }
+}
+
+@layer utilities {
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(-100vh) scale(0.0);
+    }
+
+    100% {
+      opacity: 1;
+      transform:translateY(0) scale(1);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 2s ease-in-out ;
+  }
+}
+@layer utilities {
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(100vh) scale(0.0);
+    }
+
+    100% {
+      opacity: 1;
+      transform:translateY(0) scale(1);
+    }
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 2s ease-in-out ;
+  }
 }
