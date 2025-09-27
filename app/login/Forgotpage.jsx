@@ -25,6 +25,8 @@ const Page = ({isFlipped, setIsFlipped}) => {
   const [confirmpasserror, setconfirmpasserror] = useState("");
   const [ISVALIDconfirmpass, setISVALIDconfirmpass] = useState(false);
 
+
+  const [hover, sethover] = useState(false)
   // SETTING forgotemail AND ERROR
   const valforgotemail = (e) => {
     setforgotemail(e.target.value);
@@ -197,14 +199,17 @@ const Page = ({isFlipped, setIsFlipped}) => {
 
   return (
     <div className="w-[100vw] h-[100vh] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-<div className="  bg-black  border-4  border-gray-900  rounded-[50] w-[35%] relative flex items-center justify-center h-[75%] ">
-        <div className="box relative z-10 border-4 border-gray-900   bg-white/10 backdrop-blur-lg p-10 rounded-2xl shadow-2xl w-[40%] sm:w-[400px] flex flex-col items-center">
+<div className="  bg-black  border-4  border-gray-900  rounded-[50] w-[35%] relative flex items-center justify-center  ">
+        <div   onMouseEnter={() => sethover(true)} 
+  onMouseLeave={() => sethover(false)}    className={`box  relative z-10 border-4 border-gray-900 bg-white/10  rounded-2xl w-[40%] sm:w-[400px] flex flex-col items-center justify-center
+    transition-all duration-700 ease-in-out  
+    ${hover ? "scale-105 brightness-110 shadow-xl h-[65vh] p-10 my-10" : "scale-100 brightness-100 shadow-md h-[5vh] p-8 my-5"}`}>
        
-          <h1 className="text-white text-2xl font-semibold mb-3 animate-fade-in-down">
+          <h1 className={`text-white text-2xl font-semibold ${hover&& "animate-fade-in-center"} `}>
             Reset Password
           </h1>
 
-          <div className="w-full mb-3 relative">
+          <div className={`w-full mb-3 relative animate-fade-in-center ${hover ? "inline":"hidden" }`}>
             <p className="text-white mr-40 text-sm pb-1">
               Enter your {OTPBOX ? "OTP" : "Email"}
             </p>
@@ -244,14 +249,14 @@ const Page = ({isFlipped, setIsFlipped}) => {
                     type="email"
                     placeholder=" Email"
                     onChange={(e) => valforgotemail(e)}
-                    className={` animate-fade-in-down py-1.5  bg-white/20  text-white relative w-[85%]  placeholder-gray-300 rounded-xl px-8 focus:outline-none focus:ring-2  ${
+                    className={`  py-1.5  bg-white/20  text-white relative w-[85%]  placeholder-gray-300 rounded-xl px-8 focus:outline-none focus:ring-2  ${
                       !otpvalid ? "focus:ring-red-400" : "focus:ring-green-400"
                     }   `}
                   />
                   {/* SEND OTP */}
                   <button
                     onClick={sendOtp}
-                    className={`animate-fade-in-down px-3 rounded-xl text-white text-[12px] ${
+                    className={`animate-fade-in-center px-3 rounded-xl text-white text-[12px] ${
                       otpvalid
                         ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
                         : "bg-gray-600 cursor-not-allowed"
@@ -267,7 +272,7 @@ const Page = ({isFlipped, setIsFlipped}) => {
               <Hash className="absolute left-3 top-8 text-gray-300" size={18} />
             ) : (
               <Mail
-                className="animate-fade-in-down absolute left-3 top-8 text-gray-300"
+                className="animate-fade-in-center absolute left-3 top-8 text-gray-300"
                 size={18}
               />
             )}
@@ -276,7 +281,7 @@ const Page = ({isFlipped, setIsFlipped}) => {
           </div>
 
           {/* New Password */}
-          <div className="w-full mb-3 relative animate-fade-in-up">
+          <div className={`w-full mb-3 animate-fade-in-center relative ${hover ? "inline":"hidden" }`}>
             <p className="text-white text-sm pb-1">Enter your new password</p>
             <input
               className={`bg-white/20  text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
@@ -305,7 +310,7 @@ const Page = ({isFlipped, setIsFlipped}) => {
           </div>
 
           {/* Confirm Password */}
-          <div className="w-full mb-3 relative animate-fade-in-down">
+          <div className={`w-full mb-3 relative animate-fade-in-center  ${hover ? "inline":"hidden" }`}>
             <p className="text-white text-sm pb-1">Confirm password</p>
             <input
               className={`bg-white/20  text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
@@ -338,19 +343,18 @@ const Page = ({isFlipped, setIsFlipped}) => {
           {/* Submit */}
           <button
             onClick={() => SUBMIT()}
-            className={`animate-fade-in-down w-[50%] py-1.5 text-white rounded-2xl text-lg ${
+            className={`animate-fade-in-center w-[50%] py-1.5 text-white rounded-2xl text-lg ${
               ISVALID
                 ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
                 : "bg-gray-600 cursor-not-allowed"
-            }`}
+            }     ${hover ? "inline":"hidden" }` }
           >
             Submit
           </button>
 
           {/*  redirect */}
           <div
-           
-            className="animate-fade-in-up mt-3 text-sm text-gray-300 hover:text-white"
+            className={`animate-fade-in-center mt-3 text-sm text-gray-300 hover:text-white ${hover ? "inline":"hidden" }`}
             onClick={() => setIsFlipped(false)}
           >
             Back to Login

@@ -8,7 +8,7 @@ const FlipCard = () => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
-    <div className="w-screen h-screen [perspective:1000px] ">
+    <div className="w-screen h-screen [perspective:100px] ">
       <div
         className={`relative w-full h-full transition-transform duration-700 ease-in-out [transform-style:preserve-3d] ${
           isFlipped ? "rotate-y-180" : ""
