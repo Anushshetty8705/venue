@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import clientPromise from "@/lib/mongodb";
-
 export async function POST(request) {
-  try {
+    try {
     const body = await request.json();
     const client = await clientPromise;
     const db = client.db("Banquet");
@@ -12,22 +11,12 @@ export async function POST(request) {
       email: body.email
     });
   if(user)
-  {
-      if(body.password!=user.Password)
-      {
-        return NextResponse.json({ error: true, message: "Incorrect Password" });
-      }
-return NextResponse.json({ error: false, message: "success" });
+{  
+   await  collection.updateOne({email:body.email} ,{$set:{Password:body.password}})
+        return NextResponse.json({ error: false, message: " Password changed" });
+     
     }
     return NextResponse.json({ error: true, message: "User don't exist" });
-    
-
-  
-
-
-
-
-
   } catch (error) {
     console.error("Login Error:", error);
     return NextResponse.json({

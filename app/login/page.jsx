@@ -3,28 +3,15 @@ import React, { useState,useEffect } from "react";
 import Register from "./Register";
 import Login from "./Login";
 
-
-
-
-
-
-const Page = ({ Visible, setVisible }) => {
+const Page = () => {
   const [active, setActive] = useState(0);
  
-  
-      
-    
-
   return (
     <div className="flex items-center justify-center h-screen ">
       {/* Container with two equal halves */}
-      <div className="animate-fade-in-center h-[70vh] w-[50vw] flex fixed rounded-4xl z-10 bg-white/10 overflow-hidden box">
+      <div className=" animate-fade-in-center bg-transparent rounded-[50] w-[55%] relative flex items-center justify-center h-[80%] border boredr-8 border-black">
+      <div className="box2 border boredr-8 border-gray-800 h-[70vh] w-[50vw]  flex fixed rounded-4xl z-10 bg-white/10 overflow-hidden ">
         {!active ?<Login/>: <Register/>   } 
-      
-  
-    
-    
-      
 
         <div
   className={`absolute top-0 h-full w-1/2 bg-gray-700 cursor-pointer transition-all duration-500
@@ -47,6 +34,7 @@ const Page = ({ Visible, setVisible }) => {
 
         
         </div>
+      </div>
       </div>
     </div>
   );

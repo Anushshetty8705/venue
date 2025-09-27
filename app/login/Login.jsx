@@ -101,6 +101,7 @@ const Login = () => {
       loginEmail.length > 8 &&
       loginEmail.endsWith("@gmail.com")
     ) {
+     
       setvalidcred(true);
       try {
         const toastId = toast.loading("Logging in...");
@@ -139,42 +140,42 @@ const Login = () => {
 
   return (
     <div className="h-full w-1/2 flex flex-col items-center justify-center ">
-      <div className="text-white text-3xl font-semibold mb-4 animate-fade-in-down">
+      <div className="text-white text-2xl font-semibold mb-3 animate-fade-in-down">
         LOGIN
       </div>
 
       {/* Email */}
-      <div className="w-[80%] mb-4 relative animate-fade-in-down">
-        <p className="text-white mr-40 text-sm pb-1">Enter your Email</p>
+      <div className="w-[80%] mb-3 relative animate-fade-in-down">
+        <p className="text-white  text-sm pb-1">Enter your Email</p>
         <input
           value={loginEmail}
           onChange={valloginEmail}
           type="email"
           placeholder="Email"
-          className={`bg-white/20  text-white w-full py-3 rounded-xl px-10 placeholder-gray-300 focus:outline-none focus:ring-2 ${
+          className={`bg-white/20  text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
             isvaldemail ? "focus:ring-green-400 " : "focus:ring-red-400 "
           } `}
         />
         {/* MAIL ICON */}
-        <Mail className="absolute left-3 top-9 text-gray-300" size={13} />
+        <Mail className="absolute left-3 top-8 text-gray-300" size={18} />
         {/* EMAIL ERROR */}
-        <div className="text-red-400">{logemailerror}</div>
+        <div className="text-red-400 text-sm">{logemailerror}</div>
       </div>
 
       {/* Password */}
-      <div className="w-[80%] mb-4 relative animate-fade-in-up">
-        <p className="text-white mr-40 text-sm pb-1">Enter your Password</p>
+      <div className="w-[80%] mb-3 relative animate-fade-in-up">
+        <p className="text-white text-sm pb-1">Enter your Password</p>
         <input
           value={loginPassword}
           onChange={valloginPassword}
           type={ShowPasword ? "text" : "password"}
           placeholder="Password"
-          className={`bg-white/20 w-full py-3 text-white rounded-xl px-11 placeholder-gray-300 focus:outline-none focus:ring-2 ${
+          className={`bg-white/20 w-full py-1.5 text-white rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
             isvalidpass ? "focus:ring-green-400 " : "focus:ring-red-400 "
           }`}
         />
         {/* KEY ICON */}
-        <KeyRound className="absolute left-3 top-8 text-gray-300" size={13} />
+        <KeyRound className="absolute left-3 top-8 text-gray-300" size={18} />
         {/* HIDE AND SHOW PASSWORD */}
         <button
           type="button"
@@ -182,23 +183,23 @@ const Login = () => {
           className="absolute right-3 top-8 text-gray-300"
         >
           {/* EYE ICON */}
-          {!ShowPasword ? <EyeOff size={17} /> : <Eye size={17} />}
+          {!ShowPasword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
         <div>
           {/* PASSWORD ERROR */}
-          <p className="text-red-400 mt-1">{logpasserror}</p>
+          <p className="text-red-400 mt-1 text-sm">{logpasserror}</p>
         </div>
       </div>
       {/* ROUTTING TO FORGOT PASSWORD PAGE */}
       <Link
         href="/Forgot"
-        className="text-gray-300 hover:text-white mb-4 animate-fade-in-up"
+        className="text-gray-300 hover:text-white mb-2 animate-fade-in-up"
       >
         Forgot Password?
       </Link>
       {/* LOGIN */}
       <button
-        className={`w-[60%] py-2.5 text-white animate-fade-in-up rounded-2xl text-xl ${
+        className={`w-[50%] py-1.5 text-white animate-fade-in-up rounded-2xl text-lg ${
           validcred
             ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
             : "bg-gray-600 cursor-not-allowed"
@@ -208,7 +209,7 @@ const Login = () => {
         Login
       </button>
 
-      <div className="text-white/80 my-4 animate-fade-in-down">
+      <div className="text-white/80 my-2 animate-fade-in-down">
         or continue with
       </div>
       {/* SOCIAL PALTFORM */}
@@ -220,21 +221,21 @@ const Login = () => {
                 {" "}
                 <FaGithub
                   className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                  size={24}
+                  size={35}
                 />
               </button>
               <button onClick={() => signIn("google")}>
                 {" "}
                 <FaGoogle
                   className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                  size={24}
+                  size={35}
                 />
               </button>
               <button onClick={() => signIn("facebook")}>
                 {" "}
                 <FaFacebookF
                   className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                  size={24}
+                  size={35}
                 />
               </button>
             </div>

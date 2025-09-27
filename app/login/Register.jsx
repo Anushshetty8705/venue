@@ -183,10 +183,10 @@ const verifyOtp = async () => {
       setisvalid(false);
       setregpasserror("* This field is required");
     }
-    if (registeremail !== verifiedEmail) {
-      toast.warning("Please verify your current email before registering ❌");
-      return; // stop registration
-    }
+    // if (registeremail !== verifiedEmail) {
+    //   toast.warning("Please verify your current email before registering ❌");
+    //   return; // stop registration
+    // }
 
     if (
       registeremail.length > 8 &&
@@ -232,26 +232,26 @@ const verifyOtp = async () => {
 
   return (
     <>
-      <div className="h-full w-1/2 flex flex-col items-center justify-center relative  gap-2 animate-fade-in-up ">
-        <div className="text-white text-3xl font-semibold mb-6 ">REGISTER</div>
+      <div className="h-full w-1/2 flex flex-col items-center justify-center relative  gap-2  ">
+        <div className="text-white text-2xl font-semibold mb-4 animate-fade-in-down ">REGISTER</div>
         {/* USERNAME */}
-        <div className="w-[80%] mb-4 relative">
+        <div className="w-[80%] mb-3 relative animate-fade-in-up">
           <p className="text-white mr-40 text-sm pb-1">Enter your Name</p>
           <input
             type="text"
             placeholder=" Name"
             value={registerusername}
             onChange={(e) => valregisterusername(e)}
-            className={`bg-white/20 w-[100%] py-3 relative text-white placeholder-gray-300  rounded-xl px-10 focus:outline-none focus:ring-2 ${
+            className={`bg-white/20 w-[100%] py-1.5 relative text-white placeholder-gray-300  rounded-xl px-8 focus:outline-none focus:ring-2 ${
               !isuservalid ? "focus:ring-red-400" : "focus:ring-green-400"
             } `}
           />
           {/* USER ICON */}
-          <User className="absolute left-3 top-8 text-gray-300" size={14} />
+          <User className="absolute left-3 top-8 text-gray-300" size={18} />
           {/* USER ERROR */}
-          <div className="text-red-400 ">{regusererror}</div>
+          <div className="text-red-400 text-sm">{regusererror}</div>
         </div>
-        <div className="w-[80%] mb-4 relative">
+        <div className="w-[80%] mb-3 relative animate-fade-in-down">
           <p className="text-white mr-40 text-sm pb-1">
             Enter your {visotp ? "OTP" : "Email"}
           </p>
@@ -265,14 +265,14 @@ const verifyOtp = async () => {
                   type="tel"
                   placeholder=" OTP"
                   onChange={(e) => valotp(e)}
-                  className={`bg-white/20 text-white relative w-[80%]  placeholder-gray-300 rounded-xl px-10 focus:outline-none focus:ring-2 ${
+                  className={`animate-fade-in-center bg-white/20 text-white relative w-[80%]  placeholder-gray-300 rounded-xl px-8 py-1.5 focus:outline-none focus:ring-2 ${
                     !validotp ? " focus:ring-red-400" : " focus:ring-green-400"
                   }`}
                 />
                 {/* VERIFY */}
                 <button
                   onClick={verifyOtp}
-                  className={`px-3 py-2 rounded-xl text-white text-[12px] ${
+                  className={`animate-fade-in-center px-3 rounded-xl text-white text-[12px] ${
                     validotp
                       ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
                       : "bg-gray-600 cursor-not-allowed"
@@ -289,14 +289,14 @@ const verifyOtp = async () => {
                   type="email"
                   placeholder=" Email"
                   onChange={(e) => valregisteremail(e)}
-                  className={`  bg-white/20  text-white relative w-[80%]  placeholder-gray-300 rounded-xl px-10 focus:outline-none focus:ring-2  ${
+                  className={`animate-fade-in-up bg-white/20 py-1.5  text-white relative w-[80%]  placeholder-gray-300 rounded-xl px-8 focus:outline-none focus:ring-2  ${
                     !EMAILVALID ? "focus:ring-red-400" : "focus:ring-green-400"
                   }   `}
                 />
                 {/* SEND OTP */}
                 <button
                   onClick={sendOtp}
-                  className={` px-3 py-2 rounded-xl text-white text-[12px] ${
+                  className={`animate-fade-in-up px-3  rounded-xl text-white text-[12px] ${
                     EMAILVALID
                       ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
                       : "bg-gray-600 cursor-not-allowed"
@@ -309,14 +309,14 @@ const verifyOtp = async () => {
           </div>
           {/* HASH AND MAIL ICON */}
           {visotp ? (
-            <Hash className="absolute left-3 top-8 text-gray-300" size={14} />
+            <Hash className="animate-fade-in-down  absolute left-3 top-8 text-gray-300" size={18} />
           ) : (
-            <Mail className="absolute left-3 top-8 text-gray-300" size={14} />
+            <Mail className=" animate-fade-in-center absolute left-3 top-8 text-gray-300" size={18} />
           )}
           {/* EMAIL ERROR */}
-          <div className="text-red-400 ">{regemailerror}</div>
+          <div className="text-red-400 text-sm ">{regemailerror}</div>
         </div>
-        <div className="w-[80%] mb-4 relative">
+        <div className="w-[80%] mb-3 relative animate-fade-in-down">
           <p className="text-white text-sm pb-1">Enter your password</p>
           {/* PASSWORD */}
           <input
@@ -324,7 +324,7 @@ const verifyOtp = async () => {
             type={ShowPasword ? "text" : "password"}
             placeholder="Password"
             onChange={(e) => valregisterpassword(e)}
-            className={`bg-white/20 w-[100%] py-3 relative text-white placeholder-gray-300  rounded-xl px-10 focus:outline-none focus:ring-2 ${
+            className={`bg-white/20 w-[100%] py-1.5 relative text-white placeholder-gray-300  rounded-xl px-8 focus:outline-none focus:ring-2 ${
               !ispassvalid ? "focus:ring-red-400" : "focus:ring-green-400"
             } `}
           />
@@ -335,17 +335,17 @@ const verifyOtp = async () => {
             className="absolute right-3 top-8 text-gray-300"
           >
             {/* EYE ICON */}
-            {!ShowPasword ? <EyeOff size={16} /> : <Eye size={16} />}
+            {!ShowPasword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
           {/* PASSSWORD ICON */}
-          <KeyRound className="absolute left-3 top-8 text-gray-300" size={14} />
+          <KeyRound className="absolute left-3 top-8 text-gray-300" size={18} />
           {/* PASSWORD ERROR */}
-          <div className="text-red-400 ">{regpasserror}</div>
+          <div className="text-red-400  text-sm">{regpasserror}</div>
         </div>
         {/* REGISTRATION */}
         <button
           onClick={() => registerconfirm()}
-          className={` w-[60%] py-2.5 text-white rounded-2xl text-xl ${
+          className={`animate-fade-in-up w-[40%] py-2 text-white rounded-2xl text-lg  ${
             isvalid
               ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
               : "bg-gray-600 cursor-not-allowed"
