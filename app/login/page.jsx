@@ -1,43 +1,31 @@
 "use client";
-import React, { useState,useEffect } from "react";
-import Register from "./Register";
-import Login from "./Login";
 
-const Page = () => {
-  const [active, setActive] = useState(0);
- 
+import React, { useState } from "react";
+import MainPage from "./MainPage";
+import Forgotpage from "./Forgotpage";
+
+const FlipCard = () => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
   return (
-    <div className="flex items-center justify-center h-screen ">
-      {/* Container with two equal halves */}
-      <div className=" animate-fade-in-center bg-transparent rounded-[50] w-[55%] relative flex items-center justify-center h-[80%] border boredr-8 border-black">
-      <div className="box2 border boredr-8 border-gray-800 h-[70vh] w-[50vw]  flex fixed rounded-4xl z-10 bg-white/10 overflow-hidden ">
-        {!active ?<Login/>: <Register/>   } 
-
-        <div
-  className={`absolute top-0 h-full w-1/2 bg-gray-700 cursor-pointer transition-all duration-500
-    rounded-l-[70px] left-[25vw]
-  `}
-  
->
-
-            <div className={`flex flex-col items-center justify-center  h-full gap-3 animate-fade-in-center`}>
-              <span className="text-white text-4xl ">{!active ? "Hello,Welcome" :"Welcome back"}</span>
-              <span className="text-white ">{!active ? "Dont't have a account" :"Alerady have a acoount"}</span>
-              <button
-                className=" px-12 py-2 rounded-full text-white  text-xl bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90 "
-                onClick={() => setActive(!active)}
-              >
-                {!active ? "Register" :"  Login in"}
-              </button>
-            </div>
-          
-
-        
+    <div className="w-screen h-screen [perspective:1000px] ">
+      <div
+        className={`relative w-full h-full transition-transform duration-700 ease-in-out [transform-style:preserve-3d] ${
+          isFlipped ? "rotate-y-180" : ""
+        }`}
+      >
+        {/* Front Side (Login) */}
+        <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] z-20">
+          <MainPage setIsFlipped={setIsFlipped} />
         </div>
-      </div>
+
+        {/* Back Side (Forgot Password) */}
+        <div className="inset-0 w-full h-full [transform:rotateY(180deg)] [backface-visibility:hidden] z-10 flex items-center justify-center">
+          <Forgotpage setIsFlipped={setIsFlipped} />
+        </div>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default FlipCard;

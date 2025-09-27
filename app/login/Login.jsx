@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast, Flip } from "react-toastify"; //TOAST
 
-const Login = () => {
+const Login = ({isFlipped, setIsFlipped}) => {
   const { data: session, status } = useSession(); //DATA FROM SOCIAL PLATFORM
   const [loginEmail, setLoginEmail] = useState(""); //FOR EMAIL
   const [loginPassword, setLoginPassword] = useState(""); //FOR PASSWORD
@@ -191,12 +191,13 @@ const Login = () => {
         </div>
       </div>
       {/* ROUTTING TO FORGOT PASSWORD PAGE */}
-      <Link
-        href="/Forgot"
+      <div
+        
         className="text-gray-300 hover:text-white mb-2 animate-fade-in-up"
+        onClick={() => setIsFlipped(true)}
       >
         Forgot Password?
-      </Link>
+      </div>
       {/* LOGIN */}
       <button
         className={`w-[50%] py-1.5 text-white animate-fade-in-up rounded-2xl text-lg ${

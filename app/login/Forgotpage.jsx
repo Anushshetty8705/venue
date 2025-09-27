@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Eye, EyeOff, KeyRound, Mail, Hash } from "lucide-react"; // added User + Lock icons
 import { toast, Flip } from "react-toastify"; //TOAST
 
-const Page = () => {
+const Page = ({isFlipped, setIsFlipped}) => {
   const [forgotemail, setforgotemail] = useState(""); //FOR forgotemail
   const [forgotemailERROR, setforgotemailERROR] = useState(""); // FOR forgotemail ERROR
   const [OTPBOX, setOTPBOX] = useState(false); // TO SHOW OTP INPUT BOX
@@ -198,7 +198,7 @@ const Page = () => {
   return (
     <div className="w-[100vw] h-[100vh] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
 <div className="  bg-black  border-4  border-gray-900  rounded-[50] w-[35%] relative flex items-center justify-center h-[75%] ">
-        <div className="box relative z-20 border-4 border-gray-900   bg-white/10 backdrop-blur-lg p-10 rounded-2xl shadow-2xl w-[40%] sm:w-[400px] flex flex-col items-center">
+        <div className="box relative z-10 border-4 border-gray-900   bg-white/10 backdrop-blur-lg p-10 rounded-2xl shadow-2xl w-[40%] sm:w-[400px] flex flex-col items-center">
        
           <h1 className="text-white text-2xl font-semibold mb-3 animate-fade-in-down">
             Reset Password
@@ -348,12 +348,13 @@ const Page = () => {
           </button>
 
           {/*  redirect */}
-          <Link
-            href="/login"
+          <div
+           
             className="animate-fade-in-up mt-3 text-sm text-gray-300 hover:text-white"
+            onClick={() => setIsFlipped(false)}
           >
             Back to Login
-          </Link>
+          </div>
       
 
       </div>
