@@ -1,10 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 import { Eye, EyeOff, KeyRound, Mail, Hash } from "lucide-react"; // added User + Lock icons
-import { toast, Flip } from "react-toastify"; //TOAST
+import { toast } from "react-toastify"; //TOAST
 
-const Page = ({isFlipped, setIsFlipped}) => {
+const Page = ({ isFlipped, setIsFlipped }) => {
   const [forgotemail, setforgotemail] = useState(""); //FOR forgotemail
   const [forgotemailERROR, setforgotemailERROR] = useState(""); // FOR forgotemail ERROR
   const [OTPBOX, setOTPBOX] = useState(false); // TO SHOW OTP INPUT BOX
@@ -12,7 +11,8 @@ const Page = ({isFlipped, setIsFlipped}) => {
   const [otpvalid, setotpvalid] = useState(false); //FOR CEHCKING OTP VALID FOR INPUT BOX AND VERIFY
   const [otp, setotp] = useState(""); // FOR OTP
   const [validotp, setvalidotp] = useState(false); //to check email ADDRESS and send otp BUTTTON
-  const [verifiedEmail, setVerifiedEmail] = useState(""); // TO STORE  THE VALUE OF OTP forgotemail
+  const [verifiedEmail, setVerifiedEmail] = useState(""); // TO STORE  THE VALUE OF VERIFIED OTP EMAIL
+  const [isEmailVerified, setIsEmailVerified] = useState(false); // Email OTP verified?
 
   const [ShowPasword, setShowPasword] = useState(false); //SHOW AND HIDE PASSWORD
   const [showConfirmPassword, setshowConfirmPassword] = useState(false); //SHOW AND HIDE CONFIRM PASSWORD
@@ -25,19 +25,19 @@ const Page = ({isFlipped, setIsFlipped}) => {
   const [confirmpasserror, setconfirmpasserror] = useState("");
   const [ISVALIDconfirmpass, setISVALIDconfirmpass] = useState(false);
 
+  const [hover, sethover] = useState(false);
 
-  const [hover, sethover] = useState(false)
   // SETTING forgotemail AND ERROR
   const valforgotemail = (e) => {
     setforgotemail(e.target.value);
+    setIsEmailVerified(false); // Reset OTP verification on email change
     if (e.target.value.length < 8) {
       setISVALID(false);
       setotpvalid(false);
-      setforgotemailERROR("email must be 8 char");
+      setforgotemailERROR("Email must be 8 char");
     } else if (!e.target.value.endsWith("@gmail.com")) {
       setISVALID(false);
       setotpvalid(false);
-
       setforgotemailERROR("Invalid email (must end with @gmail.com)");
     } else {
       setISVALID(true);
@@ -58,36 +58,42 @@ const Page = ({isFlipped, setIsFlipped}) => {
 
   // CONFIRM PASSWORD
   const confirmpass = (e) => {
-    setconfirmPassword(e.target.value);
-    if (e.target.value.length < 8) {
+    const value = e.target.value;
+    setconfirmPassword(value);
+
+    if (value.length < 8) {
       setISVALIDconfirmpass(false);
       setconfirmpasserror("Password must be at least 8 chars");
       setISVALID(false);
-    }
-     else if(e.target.value!==password){
-        setconfirmpasserror("Password don't match");
-     }
-    else {
+    } else if (value !== password) {
+      setISVALIDconfirmpass(false);
+      setconfirmpasserror("Passwords don't match");
+      setISVALID(false);
+    } else {
       setISVALIDconfirmpass(true);
       setconfirmpasserror("");
-      // setvalidcred(true)
-      setISVALID(true);
+      if (isEmailVerified) setISVALID(true);
     }
   };
 
   // PASSWORD
   const PASSWORD = (e) => {
-    setLoginPassword(e.target.value);
-    if (e.target.value.length < 8) {
+    const value = e.target.value;
+    setLoginPassword(value);
+    if (value.length < 8) {
       setISVALID_PASS(false);
       setISVALID(false);
       setPASSWORDERROR("Password must be at least 8 chars");
-      // setvalidcred(false)
+    } else if (confirmPassword && value !== confirmPassword) {
+      setconfirmpasserror("Passwords don't match");
+      setISVALID(false);
     } else {
       setISVALID_PASS(true);
       setPASSWORDERROR("");
-      // setvalidcred(true)
-      setISVALID(true);
+      if (confirmPassword === value && isEmailVerified) {
+        setISVALID(true);
+        setconfirmpasserror("");
+      }
     }
   };
 
@@ -95,8 +101,6 @@ const Page = ({isFlipped, setIsFlipped}) => {
   const sendOtp = async () => {
     if (forgotemail.length > 8 && forgotemail.endsWith("@gmail.com")) {
       try {
-        setVerifiedEmail(forgotemail); // only this email is marked verified
-
         const res = await fetch("/api/send-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -118,21 +122,29 @@ const Page = ({isFlipped, setIsFlipped}) => {
   // VERIFYING OTP
   const verifyOtp = async () => {
     if (otp.length === 6) {
-      const res = await fetch("/api/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }, // 👈 fix
-        body: JSON.stringify({ email: forgotemail, otp }),
-      });
+      try {
+        const res = await fetch("/api/verify-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: forgotemail, otp }),
+        });
 
-      const data = await res.json();
-      {
-        setOTPBOX(false);
+        const data = await res.json();
+        if (data.success) {
+          setIsEmailVerified(true);
+          setVerifiedEmail(forgotemail);
+          setOTPBOX(false);
+          toast.success("Email verified ✅");
+          // enable submit if passwords match
+          if (password.length >= 8 && confirmPassword === password) setISVALID(true);
+        } else {
+          setIsEmailVerified(false);
+          toast.error("Invalid OTP ❌");
+        }
+      } catch {
+        toast.error("Something went wrong ❌");
       }
-
-      toast.success("Email verfied");
     }
-
-    // will show "OTP verified ✅" or "Invalid OTP ❌"
   };
 
   //TO CHANGE PASSWORD
@@ -141,75 +153,64 @@ const Page = ({isFlipped, setIsFlipped}) => {
       setforgotemailERROR("* This field is required");
       setISVALID(false);
     }
-
-    if (confirmPassword.length == 0) {
-      setISVALID(false);
-      setconfirmpasserror("* This field is required");
-    }
-    if (password.length == 0) {
+    if (password.length === 0) {
       setISVALID(false);
       setPASSWORDERROR("* This field is required");
     }
-    //     if (forgotemail !== verifiedEmail) {
-    //   toast.error("Please verify your current email before registering ❌");
-    //   return; // stop registration
-    // }
+    if (confirmPassword.length === 0) {
+      setISVALID(false);
+      setconfirmpasserror("* This field is required");
+    }
 
-    // verifiedEmail === forgotemail
+    if (!isEmailVerified) {
+      toast.error("Please verify your email before changing password ❌");
+      return;
+    }
+
     if (
       forgotemail.length > 8 &&
-      password.length > 8 &&
-      confirmPassword.length > 8 &&
-      forgotemail.endsWith("@gmail.com")
+      password.length >= 8 &&
+      confirmPassword.length >= 8 &&
+      forgotemail.endsWith("@gmail.com") &&
+      password === confirmPassword &&
+      isEmailVerified
     ) {
-      // verifiedEmail === forgotemail
       try {
         const toastId = toast.loading("Changing password...");
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        const raw = JSON.stringify({
-          email: forgotemail,
-          password: confirmPassword,
-        });
-
-        const requestOptions = {
+        fetch("/api/forgot", {
           method: "POST",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow",
-        };
-
-        fetch("/api/forgot", requestOptions) // update endpoint here
-          .then((response) => response.json())
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: forgotemail, password }),
+        })
+          .then((res) => res.json())
           .then((result) => {
-            console.log("Login API Response:", result);
             toast.dismiss(toastId);
-
-            if (result.error === false) {
-              toast.success("Changed  successful!");
+            if (!result.error) {
+              toast.success("Password changed successfully!");
             } else {
               toast.error(result.message || "Error");
             }
           });
       } catch {
-        toast.error("something went Wrong");
+        toast.error("Something went wrong ❌");
       }
     }
   };
 
   return (
     <div className="w-[100vw] h-[100vh] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-<div className="  bg-black  border-4  border-gray-900  rounded-[50] w-[35%] relative flex items-center justify-center  ">
-        <div   onMouseEnter={() => sethover(true)} 
-  onMouseLeave={() => sethover(false)}    className={`box  relative z-10 border-4 border-gray-900 bg-white/10  rounded-2xl w-[40%] sm:w-[400px] flex flex-col items-center justify-center
-    transition-all duration-700 ease-in-out  
-    ${hover ? "scale-105 brightness-110 shadow-xl h-[65vh] p-10 my-10" : "scale-100 brightness-100 shadow-md h-[5vh] p-8 my-5"}`}>
-       
-          <h1 className={`text-white text-2xl font-semibold ${hover&& "animate-fade-in-center"} `}>
+      <div className="bg-black border-4 border-gray-900 rounded-[50] w-[35%] relative flex items-center justify-center">
+        <div
+          onMouseEnter={() => sethover(true)}
+          className={`box relative z-10 border-4 border-gray-900 bg-white/10 rounded-2xl w-[40%] sm:w-[400px] flex flex-col items-center justify-center
+            transition-all duration-700 ease-in-out  
+            ${hover ? "scale-105 brightness-110 shadow-xl h-[65vh] p-10 my-10" : "scale-100 brightness-100 shadow-md h-[5vh] p-8 my-5"}`}
+        >
+          <h1 className={`text-white text-2xl font-semibold ${hover && "animate-fade-in-center"}`}>
             Reset Password
           </h1>
 
-          <div className={`w-full mb-3 relative animate-fade-in-center ${hover ? "inline":"hidden" }`}>
+          <div className={`w-full mb-3 relative animate-fade-in-center ${hover ? "inline" : "hidden"}`}>
             <p className="text-white mr-40 text-sm pb-1">
               Enter your {OTPBOX ? "OTP" : "Email"}
             </p>
@@ -222,11 +223,9 @@ const Page = ({isFlipped, setIsFlipped}) => {
                     value={otp}
                     type="tel"
                     placeholder=" OTP"
-                    onChange={(e) => valotp(e)}
-                    className={`bg-white/20 text-white relative w-[85%]  placeholder-gray-300 rounded-xl px-8 py-1.5 focus:outline-none focus:ring-2 ${
-                      !validotp
-                        ? " focus:ring-red-400"
-                        : " focus:ring-green-400"
+                    onChange={valotp}
+                    className={`bg-white/20 text-white relative w-[85%] placeholder-gray-300 rounded-xl px-8 py-1.5 focus:outline-none focus:ring-2 ${
+                      !validotp ? "focus:ring-red-400" : "focus:ring-green-400"
                     }`}
                   />
                   {/* VERIFY */}
@@ -236,7 +235,7 @@ const Page = ({isFlipped, setIsFlipped}) => {
                       validotp
                         ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
                         : "bg-gray-600 cursor-not-allowed"
-                    } `}
+                    }`}
                   >
                     Verify
                   </button>
@@ -248,10 +247,10 @@ const Page = ({isFlipped, setIsFlipped}) => {
                     value={forgotemail}
                     type="email"
                     placeholder=" Email"
-                    onChange={(e) => valforgotemail(e)}
-                    className={`  py-1.5  bg-white/20  text-white relative w-[85%]  placeholder-gray-300 rounded-xl px-8 focus:outline-none focus:ring-2  ${
+                    onChange={valforgotemail}
+                    className={`py-1.5 bg-white/20 text-white relative w-[85%] placeholder-gray-300 rounded-xl px-8 focus:outline-none focus:ring-2 ${
                       !otpvalid ? "focus:ring-red-400" : "focus:ring-green-400"
-                    }   `}
+                    }`}
                   />
                   {/* SEND OTP */}
                   <button
@@ -268,35 +267,25 @@ const Page = ({isFlipped, setIsFlipped}) => {
               )}
             </div>
             {/* HASH AND MAIL ICON */}
-            {OTPBOX ? (
-              <Hash className="absolute left-3 top-8 text-gray-300" size={18} />
-            ) : (
-              <Mail
-                className="animate-fade-in-center absolute left-3 top-8 text-gray-300"
-                size={18}
-              />
-            )}
+            {OTPBOX ? <Hash className="absolute left-3 top-8 text-gray-300" size={18} /> : <Mail className="animate-fade-in-center absolute left-3 top-8 text-gray-300" size={18} />}
             {/* forgotemail ERROR */}
             <div className="text-red-400 text-sm">{forgotemailERROR}</div>
           </div>
 
           {/* New Password */}
-          <div className={`w-full mb-3 animate-fade-in-center relative ${hover ? "inline":"hidden" }`}>
+          <div className={`w-full mb-3 animate-fade-in-center relative ${hover ? "inline" : "hidden"}`}>
             <p className="text-white text-sm pb-1">Enter your new password</p>
             <input
-              className={`bg-white/20  text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
+              className={`bg-white/20 text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
                 ISVALID_PASS ? "focus:ring-green-400 " : "focus:ring-red-400 "
-              } `}
+              }`}
               placeholder="New password"
               type={ShowPasword ? "text" : "password"}
               value={password}
               onChange={PASSWORD}
             />
             {/* KEY Icon */}
-            <KeyRound
-              className="absolute left-3 top-8 text-gray-300"
-              size={18}
-            />
+            <KeyRound className="absolute left-3 top-8 text-gray-300" size={18} />
             {/* Show/Hide Password */}
             <button
               type="button"
@@ -310,24 +299,19 @@ const Page = ({isFlipped, setIsFlipped}) => {
           </div>
 
           {/* Confirm Password */}
-          <div className={`w-full mb-3 relative animate-fade-in-center  ${hover ? "inline":"hidden" }`}>
+          <div className={`w-full mb-3 relative animate-fade-in-center ${hover ? "inline" : "hidden"}`}>
             <p className="text-white text-sm pb-1">Confirm password</p>
             <input
-              className={`bg-white/20  text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
-                ISVALIDconfirmpass
-                  ? "focus:ring-green-400 "
-                  : "focus:ring-red-400 "
-              } `}
+              className={`bg-white/20 text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
+                ISVALIDconfirmpass ? "focus:ring-green-400 " : "focus:ring-red-400 "
+              }`}
               placeholder="Confirm password"
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
-              onChange={(e) => confirmpass(e)}
+              onChange={confirmpass}
             />
             {/* KEY Icon */}
-            <KeyRound
-              className="absolute left-3 top-8 text-gray-300"
-              size={18}
-            />
+            <KeyRound className="absolute left-3 top-8 text-gray-300" size={18} />
             {/* Show/Hide Confirm Password */}
             <button
               type="button"
@@ -342,27 +326,25 @@ const Page = ({isFlipped, setIsFlipped}) => {
 
           {/* Submit */}
           <button
-            onClick={() => SUBMIT()}
+            onClick={SUBMIT}
             className={`animate-fade-in-center w-[50%] py-1.5 text-white rounded-2xl text-lg ${
               ISVALID
                 ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
                 : "bg-gray-600 cursor-not-allowed"
-            }     ${hover ? "inline":"hidden" }` }
+            } ${hover ? "inline" : "hidden"}`}
           >
             Submit
           </button>
 
           {/*  redirect */}
           <div
-            className={`animate-fade-in-center mt-3 text-sm text-gray-300 hover:text-white ${hover ? "inline":"hidden" }`}
+            className={`animate-fade-in-center mt-3 text-sm text-gray-300 hover:text-white ${hover ? "inline" : "hidden"}`}
             onClick={() => setIsFlipped(false)}
           >
             Back to Login
           </div>
-      
-
-      </div>
         </div>
+      </div>
     </div>
   );
 };

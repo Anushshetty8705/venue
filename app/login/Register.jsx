@@ -183,18 +183,19 @@ const verifyOtp = async () => {
       setisvalid(false);
       setregpasserror("* This field is required");
     }
-    // if (registeremail !== verifiedEmail) {
-    //   toast.warning("Please verify your current email before registering ❌");
-    //   return; // stop registration
-    // }
+    if (registeremail !== verifiedEmail) {
+      toast.warning("Please verify your current email before registering ❌");
+      return; // stop registration
+    }
 
     if (
       registeremail.length > 8 &&
       registerusername.length > 8 &&
       registerpassword.length > 8 &&
       registeremail.endsWith("@gmail.com") 
+         && verifiedEmail === registeremail
     ) 
-    // && verifiedEmail === registeremail
+ 
     {
       const toastId = toast.loading('Signing.....');
     const myHeaders = new Headers();

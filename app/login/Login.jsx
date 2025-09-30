@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast, Flip } from "react-toastify"; //TOAST
 
-const Login = ({isFlipped, setIsFlipped}) => {
+const Login = ({isFlipped, setIsFlipped,hover}) => {
   const { data: session, status } = useSession(); //DATA FROM SOCIAL PLATFORM
   const [loginEmail, setLoginEmail] = useState(""); //FOR EMAIL
   const [loginPassword, setLoginPassword] = useState(""); //FOR PASSWORD
@@ -17,6 +17,8 @@ const Login = ({isFlipped, setIsFlipped}) => {
   const [isvaldemail, setisvaldemail] = useState(false); //CHECK VALID EMAIL FOR INPUT
   const [isvalidpass, setisvalidpass] = useState(false); //CHECK VALID PASSWORD FOR INPUT COLOUR
   const [validcred, setvalidcred] = useState(false); //CHECKING CREDTIONAL FOR LOGIN
+
+
 
   // SETTING EMAIL AND ERROR
   const valloginEmail = (e) => {
@@ -139,13 +141,13 @@ const Login = ({isFlipped, setIsFlipped}) => {
   };
 
   return (
-    <div className="h-full w-1/2 flex flex-col items-center justify-center ">
-      <div className="text-white text-2xl font-semibold mb-3 animate-fade-in-down">
+    <div  className="w-1/2 flex flex-col items-center justify-center ">
+      <div className={ `text-white text-2xl font-semibold  ${hover ? "mb-3 animate-fade-in-center" :"mb-0"} `}>
         LOGIN
       </div>
 
       {/* Email */}
-      <div className="w-[80%] mb-3 relative animate-fade-in-down">
+      <div className={`w-[80%] mb-3 relative  ${!hover ? " hidden":"animate-fade-in-center inline" }`}>
         <p className="text-white  text-sm pb-1">Enter your Email</p>
         <input
           value={loginEmail}
@@ -163,7 +165,7 @@ const Login = ({isFlipped, setIsFlipped}) => {
       </div>
 
       {/* Password */}
-      <div className="w-[80%] mb-3 relative animate-fade-in-up">
+      <div className={`w-[80%] mb-3 relative  ${!hover ? "hidden":" inline animate-fade-in-center" }`}>
         <p className="text-white text-sm pb-1">Enter your Password</p>
         <input
           value={loginPassword}
@@ -193,14 +195,14 @@ const Login = ({isFlipped, setIsFlipped}) => {
       {/* ROUTTING TO FORGOT PASSWORD PAGE */}
       <div
         
-        className="text-gray-300 hover:text-white mb-2 animate-fade-in-up"
+        className={`text-gray-300 hover:text-white mb-2  ${!hover ? "hidden":"animate-fade-in-center inline" }`}
         onClick={() => setIsFlipped(true)}
       >
         Forgot Password?
       </div>
       {/* LOGIN */}
       <button
-        className={`w-[50%] py-1.5 text-white animate-fade-in-up rounded-2xl text-lg ${
+        className={`w-[50%] py-1.5 text-white  rounded-2xl text-lg ${!hover ? "hidden":"animate-fade-in-center inline" } ${
           validcred
             ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
             : "bg-gray-600 cursor-not-allowed"
@@ -210,14 +212,14 @@ const Login = ({isFlipped, setIsFlipped}) => {
         Login
       </button>
 
-      <div className="text-white/80 my-2 animate-fade-in-down">
+      <div className={`text-white/80 my-2  ${!hover ? "hidden":"animate-fade-in-center inline " }`}>
         or continue with
       </div>
       {/* SOCIAL PALTFORM */}
-      <div>
+      <div className={`${!hover ? "hidden":"animate-fade-in-center inline" }`}>
         {!session && (
           <>
-            <div className=" flex items-center justify-center gap-5 animate-fade-in-up">
+            <div className=" flex items-center justify-center gap-5 ">
               <button onClick={() => signIn("github")}>
                 {" "}
                 <FaGithub
