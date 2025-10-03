@@ -13,6 +13,7 @@ const MainPage = ({ isFlipped, setIsFlipped }) => {
       <div className={`animate-fade-in-center bg-black rounded-[50px] w-[55%] relative flex items-center justify-center border-8 border-black transition-all duration-700 ease-in-out ${!hover ? "  h-[18vh]":"h-[80%]  " }`}>
         {/* Inner content container */}
         <div onMouseEnter={() => sethover(true)}
+         
            className={`box border-4 border-gray-800 h-[10vh] w-[50vw] flex fixed transition-all duration-700 ease-in-out rounded-4xl z-10 bg-white/10 overflow-hidden  ${!hover ? "  h-[10vh]":"h-[70%] " }`}
             >
           {/* Login / Register component */}
