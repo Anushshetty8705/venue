@@ -185,9 +185,9 @@ const [Visible, setVisible] = useState(false);
                 );
               })}
               <li>
-                <Link href="/dashboard" className="ml-2 px-3 py-2 rounded-md hover:bg-white/6 text-white/90">Dashboard</Link>
+                <Link href="/login" className="ml-2 px-3 py-2 rounded-md hover:bg-white/6 text-white/90">Dashboard</Link>
               </li>
-            </ul>
+            </ul>i
           </div>
         </div>
 

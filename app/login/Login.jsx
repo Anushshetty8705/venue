@@ -1,58 +1,57 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useSession, signIn, signOut } from "next-auth/react"; //SIGIN SIGOUT LOGIN
-import { Eye, EyeOff, Mail, KeyRound } from "lucide-react"; // added User + Lock icons
-import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa"; // SOCIAL PLATFORM FOR login
-import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { Eye, EyeOff, Mail, KeyRound } from "lucide-react";
+import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { toast, Flip } from "react-toastify"; //TOAST
+import { toast } from "react-toastify";
 
-const Login = ({isFlipped, setIsFlipped,hover}) => {
-  const { data: session, status } = useSession(); //DATA FROM SOCIAL PLATFORM
-  const [loginEmail, setLoginEmail] = useState(""); //FOR EMAIL
-  const [loginPassword, setLoginPassword] = useState(""); //FOR PASSWORD
-  const [logemailerror, setlogemailerror] = useState(""); //EMAIL ERROR
-  const [logpasserror, setlogpasserror] = useState(""); //PASSWORD ERROR
-  const [ShowPasword, setShowPasword] = useState(false); // SHOW AND HIDE PASSWORD
-  const [isvaldemail, setisvaldemail] = useState(false); //CHECK VALID EMAIL FOR INPUT
-  const [isvalidpass, setisvalidpass] = useState(false); //CHECK VALID PASSWORD FOR INPUT COLOUR
-  const [validcred, setvalidcred] = useState(false); //CHECKING CREDTIONAL FOR LOGIN
+const Login = ({ isFlipped, setIsFlipped, hover }) => {
+  const { data: session, status } = useSession();
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [logemailerror, setlogemailerror] = useState("");
+  const [logpasserror, setlogpasserror] = useState("");
+  const [ShowPassword, setShowPassword] = useState(false);
+  const [isvaldemail, setisvaldemail] = useState(false);
+  const [isvalidpass, setisvalidpass] = useState(false);
+  const [validcred, setvalidcred] = useState(false);
 
+  const router = useRouter();
 
-
-  // SETTING EMAIL AND ERROR
+  // Handle email input validation
   const valloginEmail = (e) => {
     setLoginEmail(e.target.value);
     if (e.target.value.length < 8) {
       setlogemailerror("Email must be at least 8 chars");
       setisvaldemail(false);
-      setvalidcred(false); //CHECKING CREDTIONAL
+      setvalidcred(false);
     } else if (!e.target.value.endsWith("@gmail.com")) {
       setisvaldemail(false);
       setlogemailerror("Invalid email (must end with @gmail.com)");
-      setvalidcred(false); //CHECKING CREDTIONAL
+      setvalidcred(false);
     } else {
       setisvaldemail(true);
-      setvalidcred(true); //CHECKING CREDTIONAL
+      setvalidcred(true);
       setlogemailerror("");
     }
   };
 
-  //  SETTING PASSWORD AND ERROR
+  // Handle password input validation
   const valloginPassword = (e) => {
     setLoginPassword(e.target.value);
     if (e.target.value.length < 8) {
       setisvalidpass(false);
       setlogpasserror("Password must be at least 8 chars");
-      setvalidcred(false); //CHECKING CREDTIONAL
+      setvalidcred(false);
     } else {
       setisvalidpass(true);
       setlogpasserror("");
-      setvalidcred(true); //CHECKING CREDTIONAL
+      setvalidcred(true);
     }
   };
 
-  const router = useRouter();
+  // Social login: save user and redirect to dynamic admin dashboard
   useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
       const saveSocialUser = async () => {
@@ -61,22 +60,21 @@ const Login = ({isFlipped, setIsFlipped,hover}) => {
           const res = await fetch("/api/sociallogin", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
               email: session.user.email,
               username: session.user.name || "SocialUser",
-              Authprovider: "google facebook github"
+              Authprovider: "google facebook github",
             }),
           });
- toast.dismiss(toastId);
           const data = await res.json();
-         
-          if (res.ok && data.error === false) {
-            toast.success(" Login sucess", { theme: "dark" });
-            router.push('/dashboard');
+          toast.dismiss(toastId);
+
+          if (res.ok && data.error === false && data.adminUuid) {
+            toast.success("Login successful", { theme: "dark" });
+            // Redirect to dynamic route
+            router.push(`/${data.adminUuid}`);
           } else {
-            toast.error(data.message || "Failed to save user ❌", {
-              theme: "dark",
-            });
+            toast.error(data.message || "Failed to save user ❌", { theme: "dark" });
           }
         } catch (err) {
           console.error("Error saving user:", err);
@@ -87,170 +85,147 @@ const Login = ({isFlipped, setIsFlipped,hover}) => {
       saveSocialUser();
     }
   }, [status, session, router]);
-  // CHECKING FOR LOGIN
-  const login = () => {
-    if (loginPassword.length === 0) {
-      setlogpasserror("* This field is required");
-      setvalidcred(false);
-    }
 
-    if (loginEmail.length === 0) {
-      setlogemailerror("* This field is required");
-      setvalidcred(false);
-    }
+  // Email/password login
+  const login = async () => {
+    if (loginPassword.length === 0) setlogpasserror("* This field is required");
+    if (loginEmail.length === 0) setlogemailerror("* This field is required");
+
     if (
-      loginPassword.length > 8 &&
-      loginEmail.length > 8 &&
+      loginPassword.length >= 8 &&
+      loginEmail.length >= 8 &&
       loginEmail.endsWith("@gmail.com")
     ) {
-     
       setvalidcred(true);
       try {
         const toastId = toast.loading("Logging in...");
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        const raw = JSON.stringify({
-          email: loginEmail,
-          password: loginPassword,
-        });
-
-        const requestOptions = {
+        const res = await fetch("/api/login", {
           method: "POST",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow",
-        };
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+        });
+        const result = await res.json();
+        toast.dismiss(toastId);
 
-        fetch("/api/login", requestOptions) // update endpoint here
-          .then((response) => response.json())
-          .then((result) => {
-            console.log("Login API Response:", result);
-            toast.dismiss(toastId);
-
-            if (result.error === false) {
-              toast.success("Login successful!");
-              router.push('/dashboard');
-            } else {
-              toast.error(result.message || "Login failed");
-            }
-          });
-      } catch {
-        toast.error("something went Wrong");
+        if (result.error === false && result.adminUuid) {
+          toast.success("Login successful!", { theme: "dark" });
+          router.push(`/${result.adminUuid}`); // dynamic route
+        } else {
+          toast.error(result.message || "Login failed");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Something went wrong ❌");
       }
     }
   };
 
   return (
-    <div  className="w-1/2 flex flex-col items-center justify-center ">
-      <div className={ `text-white text-2xl font-semibold  ${hover ? "mb-3 animate-fade-in-center" :"mb-0"} `}>
+    <div className="w-1/2 flex flex-col items-center justify-center">
+      <div
+        className={`text-white text-2xl font-semibold ${
+          hover ? "mb-3 animate-fade-in-center" : "mb-0"
+        }`}
+      >
         LOGIN
       </div>
 
       {/* Email */}
-      <div className={`w-[80%] mb-3 relative  ${!hover ? " hidden":"animate-fade-in-center inline" }`}>
-        <p className="text-white  text-sm pb-1">Enter your Email</p>
+      <div
+        className={`w-[80%] mb-3 relative ${
+          !hover ? "hidden" : "animate-fade-in-center inline"
+        }`}
+      >
+        <p className="text-white text-sm pb-1">Enter your Email</p>
         <input
           value={loginEmail}
           onChange={valloginEmail}
           type="email"
           placeholder="Email"
-          className={`bg-white/20  text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
-            isvaldemail ? "focus:ring-green-400 " : "focus:ring-red-400 "
-          } `}
+          className={`bg-white/20 text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
+            isvaldemail ? "focus:ring-green-400" : "focus:ring-red-400"
+          }`}
         />
-        {/* MAIL ICON */}
         <Mail className="absolute left-3 top-8 text-gray-300" size={18} />
-        {/* EMAIL ERROR */}
         <div className="text-red-400 text-sm">{logemailerror}</div>
       </div>
 
       {/* Password */}
-      <div className={`w-[80%] mb-3 relative  ${!hover ? "hidden":" inline animate-fade-in-center" }`}>
+      <div
+        className={`w-[80%] mb-3 relative ${
+          !hover ? "hidden" : "inline animate-fade-in-center"
+        }`}
+      >
         <p className="text-white text-sm pb-1">Enter your Password</p>
         <input
           value={loginPassword}
           onChange={valloginPassword}
-          type={ShowPasword ? "text" : "password"}
+          type={ShowPassword ? "text" : "password"}
           placeholder="Password"
           className={`bg-white/20 w-full py-1.5 text-white rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
-            isvalidpass ? "focus:ring-green-400 " : "focus:ring-red-400 "
+            isvalidpass ? "focus:ring-green-400" : "focus:ring-red-400"
           }`}
         />
-        {/* KEY ICON */}
         <KeyRound className="absolute left-3 top-8 text-gray-300" size={18} />
-        {/* HIDE AND SHOW PASSWORD */}
         <button
           type="button"
-          onClick={() => setShowPasword(!ShowPasword)}
+          onClick={() => setShowPassword(!ShowPassword)}
           className="absolute right-3 top-8 text-gray-300"
         >
-          {/* EYE ICON */}
-          {!ShowPasword ? <EyeOff size={18} /> : <Eye size={18} />}
+          {!ShowPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
-        <div>
-          {/* PASSWORD ERROR */}
-          <p className="text-red-400 mt-1 text-sm">{logpasserror}</p>
-        </div>
+        <p className="text-red-400 mt-1 text-sm">{logpasserror}</p>
       </div>
-      {/* ROUTTING TO FORGOT PASSWORD PAGE */}
+
+      {/* Forgot Password */}
       <div
-        
-        className={`text-gray-300 hover:text-white mb-2  ${!hover ? "hidden":"animate-fade-in-center inline" }`}
+        className={`text-gray-300 hover:text-white mb-2 ${
+          !hover ? "hidden" : "animate-fade-in-center inline"
+        }`}
         onClick={() => setIsFlipped(true)}
       >
         Forgot Password?
       </div>
-      {/* LOGIN */}
+
+      {/* Login Button */}
       <button
-        className={`w-[50%] py-1.5 text-white  rounded-2xl text-lg ${!hover ? "hidden":"animate-fade-in-center inline" } ${
+        className={`w-[50%] py-1.5 text-white rounded-2xl text-lg ${
+          !hover ? "hidden" : "animate-fade-in-center inline"
+        } ${
           validcred
             ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
             : "bg-gray-600 cursor-not-allowed"
         }`}
-        onClick={() => login()}
+        onClick={login}
       >
         Login
       </button>
 
-      <div className={`text-white/80 my-2  ${!hover ? "hidden":"animate-fade-in-center inline " }`}>
+      {/* Social Login */}
+      <div className={`text-white/80 my-2 ${!hover ? "hidden" : "animate-fade-in-center inline"}`}>
         or continue with
       </div>
-      {/* SOCIAL PALTFORM */}
-      <div className={`${!hover ? "hidden":"animate-fade-in-center inline" }`}>
-        {!session && (
+      <div className={`${!hover ? "hidden" : "animate-fade-in-center inline"}`}>
+        {!session ? (
+          <div className="flex items-center justify-center gap-5">
+            <button onClick={() => signIn("github")}>
+              <FaGithub className="bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800" size={35} />
+            </button>
+            <button onClick={() => signIn("google")}>
+              <FaGoogle className="bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800" size={35} />
+            </button>
+            <button onClick={() => signIn("facebook")}>
+              <FaFacebookF className="bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800" size={35} />
+            </button>
+          </div>
+        ) : (
           <>
-            <div className=" flex items-center justify-center gap-5 ">
-              <button onClick={() => signIn("github")}>
-                {" "}
-                <FaGithub
-                  className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                  size={35}
-                />
-              </button>
-              <button onClick={() => signIn("google")}>
-                {" "}
-                <FaGoogle
-                  className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                  size={35}
-                />
-              </button>
-              <button onClick={() => signIn("facebook")}>
-                {" "}
-                <FaFacebookF
-                  className="hi bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800"
-                  size={35}
-                />
-              </button>
-            </div>
+            <p className="text-white">{session.user.email}</p>
+            <button onClick={() => signOut()} className="text-white">
+              Sign out
+            </button>
           </>
         )}
-        {session && <>
-       <p className="text-white">{session.user.email}</p>
-       <button onClick={() => signOut()} className="text-white">sign out</button>
-        </>
-
-        }
-        
       </div>
     </div>
   );

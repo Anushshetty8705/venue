@@ -8,25 +8,26 @@ export async function POST(request) {
     const db = client.db("Banquet");
     const collection = db.collection("users");
 
-    const user = await collection.findOne({
-      email: body.email
-    });
-  if(user)
-  {
-      if(body.password!=user.Password)
-      {
-        return NextResponse.json({ error: true, message: "Incorrect Password" });
-      }
-return NextResponse.json({ error: false, message: "success" });
+    // Find user by email
+    const user = await collection.findOne({ email: body.email });
+
+    if (!user) {
+      return NextResponse.json({ error: true, message: "User doesn't exist" });
     }
-    return NextResponse.json({ error: true, message: "User don't exist" });
-    
 
-  
+    // Check password
+    if (body.password !== user.Password) {
+      return NextResponse.json({ error: true, message: "Incorrect Password" });
+    }
 
-
-
-
+    // Success: return UUID for dynamic routing
+    return NextResponse.json({
+      error: false,
+      message: "Login successful",
+      adminUuid: user.id, // <-- use UUID from DB
+      username: user.username,
+      email: user.email
+    });
 
   } catch (error) {
     console.error("Login Error:", error);
