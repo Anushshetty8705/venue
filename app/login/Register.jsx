@@ -2,7 +2,7 @@
 import { Eye, EyeOff, Hash, KeyRound, Mail, User } from "lucide-react"; // added User + Lock icons
 
 import React, { useState,useEffect } from "react";
-
+import { useRouter } from "next/navigation";
 
 import { toast, Flip } from "react-toastify"; //TOAST
 
@@ -24,6 +24,9 @@ const Register = () => {
   const [validotp, setvalidotp] = useState(false); //check for valiD TO INPUT AND BUTTON
   const [verifiedEmail, setVerifiedEmail] = useState(""); // stores verified email
 
+
+
+  const route = useRouter();
   // SETTING VALUE OF USER AND ERROR
   const valregisterusername = (e) => {
     setregisterusername(e.target.value);
@@ -222,7 +225,7 @@ const verifyOtp = async () => {
 
         if (result.error === "false") {
           toast.success('Signing successfully!');
-       
+           route.push("/dashboard")
         } else {
           toast.error(result.message || "Signup failed");
         }

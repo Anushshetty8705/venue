@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { use } from "react";
 // Components
 import AdminPanelSingleHall from "./AdminPanelSingleHall";
 import EditProfile from "./EditProfile";
+import { toast } from "react-toastify";
 
 export default function DashboardPage({ params }) {
   const [mode, setMode] = useState(""); // "admin" or "guest"
   const [adminId, setAdminId] = useState(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
- const { adminUuid } = use(params);
-const nfo = useRef()
- const [edtmode, setedtmode] = useState(false)
+  const { adminUuid } = use(params);
+  const nfo = useRef();
+  const [edtmode, setedtmode] = useState(false);
   const [profile, setProfile] = useState({
     username: "JohnDoe",
     email: "john@example.com",
@@ -26,48 +28,17 @@ const nfo = useRef()
   // Admin data
   const [hall, setHall] = useState({});
   const [bookings, setBookings] = useState([]);
-// useEffect(() => {
-//    const fetchEntries = async () => {
-//       try {
-      
-//            const res = await fetch(`/api/halls/entry?adminUuid=${adminUuid}`);
-       
-//         const result = await res.json();
-        
-//         if (result.success) {
-//           // console.log(result.data)
-//      nfo.current=result.data
-     
-//         console.log(nfo)
-//         } 
-//         else {
-//           alert(data.message || "Could not load entries");
-//         }
-//       } catch (err) {
-//         alert("Server error while loading entries");
-//       }
-//     };
+  
 
-//     fetchEntries();
-// },[])
+ const  route = useRouter();
   // Load adminId from localStorage on mount
-
 
   // Fetch halls when mode/adminId changes
 
-
   // Fetch halls
- 
 
   // Fetch bookings for a hall
-  const fetchBookings = async (hallId) => {
-    try {
-      const res = await axios.get(`/api/bookings?adminId=${adminId}`);
-      setBookings(res.data.filter((b) => b.hallId === hallId));
-    } catch (err) {
-      console.error(err);
-    }
-  };
+
 
   // Profile save
   const handleProfileSave = (formData) => {
@@ -85,41 +56,78 @@ const nfo = useRef()
 
   // Logout
   const onLogout = () => {
+    
+ 
+  if( confirm("🏫Leavng so soon"))
+  {
+  toast.success("Loged out")
     setMode("");
     setAdminId(null);
-    localStorage.removeItem("adminId");
-    alert("Logged out");
+ 
+  }
   };
 
   // Switch role
   const onSwitchRole = () => {
     setMode(mode === "admin" ? "guest" : "admin");
+      
+  
   };
 
   // Admin login simulation
-  const handleEnterAdmin = async() => {
-   try {
-      
-           const res = await fetch(`/api/halls/entry?adminUuid=${adminUuid}`);
-       
-        const result = await res.json();
-        
-        if (result.success) {
-          // console.log(result.data)
-     nfo.current=result.data
-     
-        console.log(nfo)
-        } 
-        else {
-          alert(data.message || "Could not load entries");
-        }
-      } catch (err) {
-        alert("Server error while loading entries");
+  const handleEnterAdmin = async () => {
+    toast.success(`enterd as admn`)
+    try {
+      const res = await fetch(`/api/halls/entry?adminUuid=${adminUuid}`);
+
+      const result = await res.json();
+
+      if (result.success) {
+        // console.log(result.data)
+        nfo.current = result.data;
+
+        console.log(nfo);
+      } else {
+        alert(data.message || "Could not load entries");
       }
-setMode("admin");
+    } catch (err) {
+      alert("Server error while loading entries");
+    }
+    setMode("admin");
+  };
+
+
+
+  const deleteProfile = async () => {
    
- 
-    
+    if (!confirm("Are you sure you want to delete your profile?")) return;
+    toast.loading("deletng......")
+    try {
+      const response = await fetch(
+        `/api/profile/delete?adminUuid=${adminUuid}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.dismiss()
+        toast.success("Profile deleted!");
+        onLogout();
+        setProfileOpen(false);
+        route.push("/")
+      } else {
+        toast.error(result.error || "Something went wrong");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("❌ Server error");
+    }
+   
   };
 
   return (
@@ -135,7 +143,9 @@ setMode("admin");
               <div className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-white to-rose-400">
                 Venue Vista
               </div>
-              <div className="text-sm text-amber-200">Banquet hall & bookings</div>
+              <div className="text-sm text-amber-200">
+                Banquet hall & bookings
+              </div>
             </div>
           </div>
 
@@ -165,13 +175,7 @@ setMode("admin");
                     Edit Profile
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm("Are you sure you want to delete your profile?")) {
-                        alert("Profile deleted!");
-                        onLogout();
-                        setProfileOpen(false);
-                      }
-                    }}
+                    onClick={() => deleteProfile()}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-700"
                   >
                     Delete Profile
@@ -245,6 +249,7 @@ setMode("admin");
 
         {/* Edit Profile */}
         {showEditProfile && (
+          
           <EditProfile initialProfile={profile} onSave={handleProfileSave} />
         )}
 
@@ -258,7 +263,6 @@ setMode("admin");
             adminUuid={adminUuid}
             nfo={nfo}
             edtmode={edtmode}
-          
           />
         )}
       </main>

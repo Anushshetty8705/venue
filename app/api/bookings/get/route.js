@@ -12,10 +12,11 @@ export async function GET(request) {
 
     const client = await clientPromise;
     const db = client.db("Banquet");
-    const collection = db.collection("Bookings");
-
+    const hallcollection = await db.collection("Halls")
+    const hall=await hallcollection.findOne({ adminUuid });
+    const bookingsCollection = await db.collection(hall.name);
     // Use .toArray() to get the actual documents
-    const entries = await collection.find({ adminUuid: adminUuid, offline: "offline" }).toArray();
+    const entries = await bookingsCollection.find({ adminUuid: adminUuid }).sort( { date: 1  }).toArray();
 
     return NextResponse.json({ success: true, error: "done", data: entries });
   } catch (err) {

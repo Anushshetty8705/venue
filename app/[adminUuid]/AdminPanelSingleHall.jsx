@@ -1,10 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import AdminOfflineBookings from "./AdminOfflineBookings";
+import AdminOnlineBookings from "./AdminOnlineBookings"; // 👈 make sure this file exists
+import { toast } from "react-toastify";
+
 export default function AdminDashboard({ adminUuid }) {
   const [hall, setHall] = useState(null);
-  const [editMode, setEditMode] = useState(false); // show form only when editing/creating
-  const [error, setError] = useState(""); // show validation errors
+  const [editMode, setEditMode] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true); // ✅ loading state
+  const [showMode, setShowMode] = useState("offline"); // ✅ toggle state: "offline" or "online"
+
   const [newHall, setNewHall] = useState({
     name: "",
     location: "",
@@ -17,25 +23,30 @@ export default function AdminDashboard({ adminUuid }) {
     images: [],
   });
 
-  // Fetch hall info
+  // ✅ Fetch hall info
   useEffect(() => {
     const fetchEntries = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`/api/halls/entry?adminUuid=${adminUuid}`);
         const result = await res.json();
 
         if (result.success && result.data) {
           setHall(result.data);
+        } else {
+          setHall(null);
         }
       } catch (err) {
         alert("Server error while loading entries");
+      } finally {
+        setLoading(false);
       }
     };
 
     if (adminUuid) fetchEntries();
   }, [adminUuid]);
 
-  // Upload images
+  // ✅ Upload images
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     Promise.all(
@@ -63,7 +74,7 @@ export default function AdminDashboard({ adminUuid }) {
     }));
   };
 
-  // Validate all fields before saving
+  // ✅ Validate hall
   const validateHall = () => {
     if (
       !newHall.name ||
@@ -85,12 +96,13 @@ export default function AdminDashboard({ adminUuid }) {
     return true;
   };
 
-  // Save or update hall
+  // ✅ Save or update hall
   const saveHall = async () => {
     if (!validateHall()) return;
-
+    const isUpdate = !!hall;
+toast.loading(isUpdate ? " Hall updatng" : " Hall creatng")
     try {
-      const isUpdate = !!hall;
+      
       const url = isUpdate ? "/api/halls/update" : "/api/halls/add";
       const method = isUpdate ? "PUT" : "POST";
 
@@ -105,13 +117,14 @@ export default function AdminDashboard({ adminUuid }) {
       if (result.success) {
         setHall(result.data);
         setEditMode(false);
-        alert(isUpdate ? "✅ Hall updated!" : "✅ Hall created!");
+        toast.dismiss()
+        toast.success(isUpdate ? "✅ Hall updated!" : "✅ Hall created!");
       } else {
-        alert(result.error || "Something went wrong");
+        toast.error(result.error || "Something went wrong");
       }
     } catch (err) {
       console.error(err);
-      alert("❌ Server error");
+      toast.error("❌ Server error");
     }
   };
 
@@ -121,8 +134,16 @@ export default function AdminDashboard({ adminUuid }) {
         🏢 Admin Hall Management
       </h1>
 
-      {/* Existing Hall Display */}
-      {hall && !editMode && (
+      {/* ✅ Loading Spinner */}
+      {loading && (
+        <div className="flex justify-center items-center py-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-400"></div>
+          <p className="ml-3 text-indigo-400">Loading hall details...</p>
+        </div>
+      )}
+
+      {/* ✅ Hall display */}
+      {!loading && hall && !editMode && (
         <div className="p-6 border border-gray-700 bg-gray-800 rounded-lg shadow">
           <h3 className="text-lg font-semibold text-indigo-300">{hall.name}</h3>
           <p>📍 {hall.location}</p>
@@ -157,10 +178,11 @@ export default function AdminDashboard({ adminUuid }) {
           </div>
         </div>
       )}
-      <AdminOfflineBookings adminUuid={adminUuid} />
 
-      {/* Create Button */}
-      {!hall && !editMode && (
+      
+
+      {/* ✅ Create Hall button */}
+      {!loading && !hall && !editMode && (
         <div className="text-center mt-10">
           <button
             onClick={() => {
@@ -184,7 +206,7 @@ export default function AdminDashboard({ adminUuid }) {
         </div>
       )}
 
-      {/* Create/Edit Form */}
+      {/* ✅ Create/Edit Form */}
       {editMode && (
         <div className="border border-gray-700 p-6 rounded-lg shadow-lg bg-gray-800 mt-6">
           <h2 className="text-xl font-semibold mb-4 text-indigo-300">
@@ -236,7 +258,6 @@ export default function AdminDashboard({ adminUuid }) {
               AC Available
             </label>
 
-            {/* Custom Upload Button */}
             <div className="col-span-2">
               <input
                 id="imageUpload"
@@ -247,9 +268,7 @@ export default function AdminDashboard({ adminUuid }) {
                 className="hidden"
               />
               <button
-                onClick={() =>
-                  document.getElementById("imageUpload").click()
-                }
+                onClick={() => document.getElementById("imageUpload").click()}
                 className="p-2 bg-gray-600 hover:bg-gray-700 text-white rounded w-full"
               >
                 📸 Upload Images
@@ -293,10 +312,43 @@ export default function AdminDashboard({ adminUuid }) {
           </div>
         </div>
       )}
+      {/* ✅ Show booking toggle only if hall exists */}
+      {!loading && hall && (
+        <div className="mt-8">
+          <div className="flex justify-center gap-4 mb-4">
+            <button
+              onClick={() => setShowMode("offline")}
+              className={`px-4 py-2 rounded ${
+                showMode === "offline"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-700 text-gray-300"
+              }`}
+            >
+              📒 Offline Bookings
+            </button>
+            <button
+              onClick={() => setShowMode("online")}
+              className={`px-4 py-2 rounded ${
+                showMode === "online"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-700 text-gray-300"
+              }`}
+            >
+              🌐 Online Bookings
+            </button>
+          </div>
 
-      {/* Custom style for number input scrollbar */}
+          {/* ✅ Toggle between offline and online bookings */}
+          {showMode === "offline" ? (
+            <AdminOfflineBookings adminUuid={adminUuid} />
+          ) : (
+            <AdminOnlineBookings adminUuid={adminUuid} />
+          )}
+        </div>
+      )}
+
+      {/* ✅ Remove number input arrows */}
       <style jsx>{`
-        /* Remove number input arrows */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
           -webkit-appearance: none;

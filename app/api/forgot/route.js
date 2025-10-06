@@ -21,7 +21,7 @@ export async function POST(request) {
 
     await collection.updateOne(
       { email: body.email },
-      { $set: { password: body.password } } // Consider hashing passwords for security
+      { $set: { Password: body.password } } // Consider hashing passwords for security
     );
 
     return NextResponse.json({ error: false, message: "Password changed successfully" });
