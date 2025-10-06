@@ -1,5 +1,3 @@
-// app/api/halls/route.js
-
 import clientPromise from "@/lib/mongodb";
 
 export async function PUT(request) {
@@ -21,29 +19,49 @@ export async function PUT(request) {
     const client = await clientPromise;
     const db = client.db("Banquet");
     const collection = db.collection("Halls");
-   await collection.updateOne(
-      { adminUuid: adminUuid },
+
+    // Find the hall document
+    const hall = await collection.findOne({ adminUuid });
+    if (!hall) {
+      return Response.json({ success: false, message: "Hall not found" });
+    }
+
+    // Rename the old collection to the new hall name
+    const oldCollectionName = hall.name;
+    const newCollectionName = name;
+
+    // Only rename if the name has changed
+    if (oldCollectionName !== newCollectionName) {
+      await db.collection(oldCollectionName).rename(newCollectionName);
+    }
+
+    // Update hall document
+    await collection.updateOne(
+      { adminUuid },
       {
-        $set: { name: name ,
-        location: location,
-        capacity: capacity,
-        ac: ac,
-        priceFullDay: priceFullDay,
-        pricePerSlot: pricePerSlot,
-        email: email,
-        phone: phone,
-        images: images,
-        }
+        $set: {
+          name,
+          location,
+          capacity,
+          ac,
+          priceFullDay,
+          pricePerSlot,
+          email,
+          phone,
+          images,
+        },
       }
     );
-    const  user=await collection.findOne({adminUuid:adminUuid})
 
-    return Response.json({ success: true, data: user, error: "updated" });
+    const updatedHall = await collection.findOne({ adminUuid });
+
+    return Response.json({ success: true, data: updatedHall, message: "Updated" });
   } catch (err) {
+    console.error(err);
     return Response.json({
       success: false,
       message: "Server error",
-      error: "faled ",
+      error: err.message,
     });
   }
 }

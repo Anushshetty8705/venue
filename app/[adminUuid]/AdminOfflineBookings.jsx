@@ -53,7 +53,7 @@ export default function AdminOfflineBookings({ adminUuid }) {
         const result = await res.json();
 
         if (result.success) {
-          console.log("good", result.data);
+       
           setBookings(result.data);
         } else {
           setBookings([]);

@@ -18,7 +18,8 @@ export async function POST(request) {
     username:body.username,
     email:body.email,
     Password:body.password ,
-    id:uuidv4()
+    image:"",
+    adminUuid:uuidv4()
   });
 
   return Response.json({ error: "false", message: "Success" });

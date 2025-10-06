@@ -1,52 +1,67 @@
 "use client";
 import React, { useState, useRef } from "react";
+import { toast } from "react-toastify";
 
-export default function EditProfile({ initialProfile, onSave }) {
+export default function EditProfile({ initialProfile, adminUuid, onUpdate, onClose }) {
   const [profile, setProfile] = useState({
     username: initialProfile.username || "",
     email: initialProfile.email || "",
     password: "",
     confirmPassword: "",
-    image: initialProfile.image || "",
+    image: initialProfile.image || null,
   });
 
   const [previewImage, setPreviewImage] = useState(profile.image);
   const fileInputRef = useRef(null);
+  const [saving, setSaving] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onloadend = () => setPreviewImage(reader.result);
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+      setProfile({ ...profile, image: reader.result });
+    };
     reader.readAsDataURL(file);
-
-    setProfile({ ...profile, image: file });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate
-    if (!profile.username || !profile.email) {
-      return alert("⚠️ Username and Email are required.");
+    if (!profile.username) return toast.error("Username is required");
+    if (profile.password && profile.password !== profile.confirmPassword)
+      return toast.error("Passwords do not match");
+
+    setSaving(true);
+
+    try {
+      const res = await fetch(`/api/newprofle?adminUuid=${adminUuid}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: profile.username,
+          password: profile.password,
+          image: profile.image,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast.success("Profile updated successfully!");
+        if (onUpdate) onUpdate(result.data); // update parent profile state
+        if (onClose) onClose(); // hide EditProfile component
+      } else {
+        toast.error(result.message || "Failed to update profile");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Server error");
+    } finally {
+      setSaving(false);
     }
-
-    if (profile.password && profile.password !== profile.confirmPassword) {
-      return alert("⚠️ Passwords do not match.");
-    }
-
-    // Create FormData if you plan to upload image
-    const formData = new FormData();
-    formData.append("username", profile.username);
-    formData.append("email", profile.email);
-    if (profile.password) formData.append("password", profile.password);
-    if (profile.image && profile.image instanceof File) formData.append("image", profile.image);
-
-    // Call onSave callback or API
-    if (onSave) onSave(formData);
-
-    alert("✅ Profile updated successfully!");
   };
 
   return (
@@ -56,9 +71,15 @@ export default function EditProfile({ initialProfile, onSave }) {
         {/* Profile Image */}
         <div className="flex flex-col items-center">
           {previewImage ? (
-            <img src={previewImage} alt="Profile" className="w-24 h-24 rounded-full object-cover mb-2" />
+            <img
+              src={previewImage}
+              alt="Profile"
+              className="w-24 h-24 rounded-full object-cover mb-2"
+            />
           ) : (
-            <div className="w-24 h-24 rounded-full bg-white/10 mb-2 flex items-center justify-center text-white">No Image</div>
+            <div className="w-24 h-24 rounded-full bg-white/20 mb-2 flex items-center justify-center text-white text-xl font-bold">
+              {profile.username?.[0] || "U"}
+            </div>
           )}
           <button
             type="button"
@@ -67,7 +88,13 @@ export default function EditProfile({ initialProfile, onSave }) {
           >
             Change Image
           </button>
-          <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handleImageChange} />
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleImageChange}
+          />
         </div>
 
         {/* Username */}
@@ -76,7 +103,9 @@ export default function EditProfile({ initialProfile, onSave }) {
           <input
             type="text"
             value={profile.username}
-            onChange={(e) => setProfile({ ...profile, username: e.target.value })}
+            onChange={(e) =>
+              setProfile({ ...profile, username: e.target.value })
+            }
             className="w-full px-4 py-2 rounded bg-white/10 text-white border border-white/20"
           />
         </div>
@@ -85,9 +114,9 @@ export default function EditProfile({ initialProfile, onSave }) {
         <div>
           <label className="text-white block mb-1">Email</label>
           <input
-            type="email"
+            type="text"
             value={profile.email}
-            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+            readOnly
             className="w-full px-4 py-2 rounded bg-white/10 text-white border border-white/20"
           />
         </div>
@@ -98,9 +127,11 @@ export default function EditProfile({ initialProfile, onSave }) {
           <input
             type="password"
             value={profile.password}
-            onChange={(e) => setProfile({ ...profile, password: e.target.value })}
-            className="w-full px-4 py-2 rounded bg-white/10 text-white border border-white/20"
+            onChange={(e) =>
+              setProfile({ ...profile, password: e.target.value })
+            }
             placeholder="Leave blank to keep current password"
+            className="w-full px-4 py-2 rounded bg-white/10 text-white border border-white/20"
           />
         </div>
 
@@ -110,18 +141,31 @@ export default function EditProfile({ initialProfile, onSave }) {
           <input
             type="password"
             value={profile.confirmPassword}
-            onChange={(e) => setProfile({ ...profile, confirmPassword: e.target.value })}
-            className="w-full px-4 py-2 rounded bg-white/10 text-white border border-white/20"
+            onChange={(e) =>
+              setProfile({ ...profile, confirmPassword: e.target.value })
+            }
             placeholder="Confirm new password"
+            className="w-full px-4 py-2 rounded bg-white/10 text-white border border-white/20"
           />
         </div>
 
-        <button
-          type="submit"
-          className="w-full px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
-        >
-          Save Changes
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { use } from "react";
@@ -17,9 +17,9 @@ export default function DashboardPage({ params }) {
   const nfo = useRef();
   const [edtmode, setedtmode] = useState(false);
   const [profile, setProfile] = useState({
-    username: "JohnDoe",
-    email: "john@example.com",
-    image: "/profile-pic.jpg",
+    username: "",
+    email: "",
+    image: "",
   });
 
   const profileRef = useRef(null);
@@ -74,25 +74,29 @@ export default function DashboardPage({ params }) {
   
   };
 
-  // Admin login simulation
-  const handleEnterAdmin = async () => {
-    toast.success(`enterd as admn`)
+  useEffect(() => {
+  const fetchProfile = async () => {
     try {
-      const res = await fetch(`/api/halls/entry?adminUuid=${adminUuid}`);
-
+      const res = await fetch(`/api/edtprofle?adminUuid=${adminUuid}`);
       const result = await res.json();
 
       if (result.success) {
-        // console.log(result.data)
-        nfo.current = result.data;
-
-        console.log(nfo);
+        console.log(result.data)
+        setProfile(result.data);
       } else {
-        alert(data.message || "Could not load entries");
+        setProfile({ username: "", email: "", image: "" });
       }
     } catch (err) {
-      alert("Server error while loading entries");
+      console.error("Error loading profile", err);
     }
+  };
+
+  if (adminUuid) fetchProfile();
+}, [adminUuid]);
+
+  // Admin login simulation
+  const handleEnterAdmin = async () => {
+    toast.success(`enterd as admn`)
     setMode("admin");
   };
 
@@ -156,8 +160,9 @@ export default function DashboardPage({ params }) {
                 onClick={() => setProfileOpen((prev) => !prev)}
                 className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full hover:bg-white/20"
               >
+                
                 <img
-                  src={profile.image}
+                 src={profile?.image || "/profile-pic.jpg"}
                   alt="Profile"
                   className="h-8 w-8 rounded-full object-cover"
                 />
@@ -167,7 +172,7 @@ export default function DashboardPage({ params }) {
                 <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg overflow-hidden">
                   <button
                     onClick={() => {
-                      // setShowEditProfile(true);
+                      setShowEditProfile(true);
                       setProfileOpen(false);
                     }}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-700"
@@ -250,7 +255,8 @@ export default function DashboardPage({ params }) {
         {/* Edit Profile */}
         {showEditProfile && (
           
-          <EditProfile initialProfile={profile} onSave={handleProfileSave} />
+          <EditProfile adminUuid={adminUuid} initialProfile={profile} onSave={handleProfileSave}  onUpdate={(updatedData) => setProfile(updatedData)}
+    onClose={() => setShowEditProfile(false)} />
         )}
 
         {/* Admin Panel */}

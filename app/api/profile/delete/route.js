@@ -12,7 +12,7 @@ export async function DELETE(request) {
     const db = client.db("Banquet");
     const hallsCollection = db.collection("Halls");
     const user=db.collection("users")
-    await user.deleteOne({id:adminUuid})
+    await user.deleteOne({adminUuid:adminUuid})
     const hall = await hallsCollection.findOne({ adminUuid });
     if (!hall) {
       return Response.json({ success: false, error: "⚠️ Profile not found" });

@@ -12,32 +12,46 @@ export async function POST(request) {
     const client = await clientPromise;
     const db = client.db("Banquet");
 
+    // Find hall by adminUuid
     const hall = await db.collection("Halls").findOne({ adminUuid });
-    if (!hall) return Response.json({ success: false, error: "⚠️ Hall not found" });
+    if (!hall) {
+      return Response.json({ success: false, error: "⚠️ Hall not found" });
+    }
 
     const bookingsCollection = db.collection(hall.name);
 
     const startDate = new Date(date);
     const finalEndDate = endDate ? new Date(endDate) : startDate;
 
-    // Conflict check
-    const conflict = await bookingsCollection.findOne({
+    // === 1️⃣ Check: Any overlap with multi-day bookings ===
+    const multiDayConflict = await bookingsCollection.findOne({
       adminUuid,
-      $or: [
-        { date: { $lte: finalEndDate }, endDate: { $exists: false }, timeSlot },
-        { date: { $lte: finalEndDate }, endDate: { $gte: startDate }, timeSlot },
-        { date: { $gte: startDate, $lte: finalEndDate }, endDate: { $exists: false }, timeSlot },
-      ],
+      date: { $lte: finalEndDate },
+      endDate: { $gte: startDate },
     });
 
-    if (conflict) {
+    if (multiDayConflict) {
       return Response.json({
         success: false,
-        error: "⚠️ Cannot book — slot/date overlaps existing booking",
+        error: `⚠️ Cannot book — dates overlap an existing multi-day booking (${multiDayConflict.date} → ${multiDayConflict.endDate})`,
       });
     }
 
-    // Insert booking
+    // === 2️⃣ Check: Any slot booking on any day of the requested period ===
+    const slotConflict = await bookingsCollection.findOne({
+      adminUuid,
+      date: { $gte: startDate, $lte: finalEndDate },
+      timeSlot: { $exists: true, $ne: null },
+    });
+
+    if (slotConflict) {
+      return Response.json({
+        success: false,
+        error: `⚠️ Cannot book — a slot (${slotConflict.timeSlot}) is already booked on ${slotConflict.date}`,
+      });
+    }
+
+    // ✅ If all checks pass — Insert booking
     await bookingsCollection.insertOne({
       offline: "offline",
       adminUuid,
@@ -50,7 +64,7 @@ export async function POST(request) {
       createdAt: new Date(),
     });
 
-    // Return all offline bookings
+    // Return all offline bookings (sorted by date)
     const newBookings = await bookingsCollection
       .find({ adminUuid, offline: "offline" })
       .sort({ date: 1 })
