@@ -39,6 +39,116 @@
 .box2{
  box-shadow: 2px 2px 30px 2px rgba(241, 246, 241, 0.31);
 }
+.calendar-dark {
+  background-color: #0c69eb !important; /* dark gray */
+  color: #d1d5db !important; /* light text */
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  padding: 0.5rem;
+}
+
+/* Weekday labels */
+.calendar-dark .react-calendar__month-view__weekdays {
+  color: #0d66fe;
+}
+
+/* Days grid */
+.calendar-dark .react-calendar__tile {
+ 
+  color: #d1d5db;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+/* Dark Calendar Theme — improved visibility */
+.calendar-dark {
+  background-color: #1f2937 !important; /* dark gray */
+  color: #e5e7eb !important; /* light text */
+  border-radius: 0.75rem;
+  border: 1px solid #374151;
+  padding: 0.75rem;
+}
+
+/* Weekday labels (Mon–Sun header row) */
+.calendar-dark .react-calendar__month-view__weekdays {
+  color: #f6f7f9;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Day cells */
+.calendar-dark .react-calendar__tile {
+
+
+  color: #f3f4f6 !important; /* make date numbers bright white */
+  border-radius: 0.5rem;
+  margin: 5px 2px;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 2px; /* optional spacing between days */
+}
+
+/* Optional: better day cell alignment */
+.react-calendar__tile {
+
+  text-align: center;
+  padding: 0.2rem 0;
+  min-height: 10px;
+}
+/* 🗓 Fix month/year/decade views to show 3 items per row */
+.react-calendar__year-view__months,
+.react-calendar__decade-view__years,
+.react-calendar__century-view__decades {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 4px;
+  justify-items: center;
+}
+
+/* Make month/year cells look uniform */
+.react-calendar__year-view__months .react-calendar__tile,
+.react-calendar__decade-view__years .react-calendar__tile,
+.react-calendar__century-view__decades .react-calendar__tile {
+  min-width: 210px;
+  min-height: 40px;
+  text-align: center;
+  border-radius: 8px;
+  background-color: #0252fe;
+  color: #ffffff;
+  transition: all 0.2s ease-in-out;
+}
+
+.react-calendar__year-view__months .react-calendar__tile:hover,
+.react-calendar__decade-view__years .react-calendar__tile:hover,
+.react-calendar__century-view__decades .react-calendar__tile:hover {
+  background-color: #042a68f9;
+}
+
+
+
+
+
+/* Hover & active */
+.calendar-dark .react-calendar__tile:hover {
+  background-color: #042a68f9;
+  color: #ffffff !important;
+}
+.calendar-dark .react-calendar__tile--active {
+  background-color: #0b0f01 !important;
+  color: #ffffff !important;
+}
+
+
+.calendar-dark .react-calendar__tile--neighboringMonth {
+  color: transparent !important;;       /* hide number */
+  pointer-events: none !important;;     /* make unclickable */
+  background: transparent !important;;  /* remove hover effect */
+}
 
 @layer utilities {
   @keyframes fade-in-center {
