@@ -157,7 +157,7 @@ const getTileClassName = (date, view, activeStartDate) => {
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <h2 className="text-xl font-bold text-indigo-400 mb-6">
-        🧾 Offline Bookings
+        🧾 Bookings
       </h2>
 
       {/* Add Booking Button */}
@@ -166,7 +166,7 @@ const getTileClassName = (date, view, activeStartDate) => {
           onClick={() => setShowForm(!showForm)}
           className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded text-white"
         >
-          {showForm ? "Cancel" : "➕ Add Offline Booking"}
+          {showForm ? "Cancel" : "➕ Add Booking"}
         </button>
       </div>
 

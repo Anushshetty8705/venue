@@ -138,10 +138,7 @@
   background-color: #042a68f9;
   color: #ffffff !important;
 }
-.calendar-dark .react-calendar__tile--active {
-  background-color: #0b0f01 !important;
-  color: #ffffff !important;
-}
+
 
 
 .calendar-dark .react-calendar__tile--neighboringMonth {

@@ -315,9 +315,9 @@ toast.loading(isUpdate ? " Hall updatng" : " Hall creatng")
       {/* ✅ Show booking toggle only if hall exists */}
       {!loading && hall && (
         <div className="mt-8">
-          <div className="flex justify-center gap-4 mb-4">
+          {/* <div className="flex justify-center gap-4 mb-4">
             <button
-              onClick={() => setShowMode("offline")}
+              // onClick={() => setShowMode("offline")}
               className={`px-4 py-2 rounded ${
                 showMode === "offline"
                   ? "bg-indigo-600 text-white"
@@ -336,14 +336,14 @@ toast.loading(isUpdate ? " Hall updatng" : " Hall creatng")
             >
               🌐 Online Bookings
             </button>
-          </div>
-
+          </div> */}
+ {/* //  : (
+          //   <AdminOnlineBookings adminUuid={adminUuid} />
+          // )} */}
           {/* ✅ Toggle between offline and online bookings */}
-          {showMode === "offline" ? (
-            <AdminOfflineBookings adminUuid={adminUuid} />
-          ) : (
-            <AdminOnlineBookings adminUuid={adminUuid} />
-          )}
+          {showMode === "offline" && (
+            <AdminOfflineBookings adminUuid={adminUuid} />)}
+         
         </div>
       )}
 

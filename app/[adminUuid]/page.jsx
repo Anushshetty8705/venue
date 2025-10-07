@@ -8,6 +8,7 @@ import { use } from "react";
 import AdminPanelSingleHall from "./AdminPanelSingleHall";
 import EditProfile from "./EditProfile";
 import { toast } from "react-toastify";
+import GuestPanel from "./guestpanel/GuestPanel";
 
 export default function DashboardPage({ params }) {
   const [mode, setMode] = useState(""); // "admin" or "guest"
@@ -31,13 +32,6 @@ export default function DashboardPage({ params }) {
   
 
  const  route = useRouter();
-  // Load adminId from localStorage on mount
-
-  // Fetch halls when mode/adminId changes
-
-  // Fetch halls
-
-  // Fetch bookings for a hall
 
 
   // Profile save
@@ -260,17 +254,21 @@ export default function DashboardPage({ params }) {
         )}
 
         {/* Admin Panel */}
-        {!showEditProfile && mode === "admin" && (
-          <AdminPanelSingleHall
-            hall={hall}
-            setHall={setHall}
-            bookings={bookings}
-            setBookings={setBookings}
-            adminUuid={adminUuid}
-            nfo={nfo}
-            edtmode={edtmode}
-          />
-        )}
+        {!showEditProfile && (
+  mode === "admin" ? (
+    <AdminPanelSingleHall
+      hall={hall}
+      setHall={setHall}
+      bookings={bookings}
+      setBookings={setBookings}
+      adminUuid={adminUuid}
+      nfo={nfo}
+      edtmode={edtmode}
+    />
+  ) : mode === "guest" ? (
+    <GuestPanel adminUuid={adminUuid} />
+  ) : null
+)}
       </main>
     </div>
   );
