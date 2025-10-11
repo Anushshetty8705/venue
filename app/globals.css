@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
-@import "tailwindcss";
+
+body {
+  background: #0b132b
+
+}
+
 .hi{color: white;
 
   opacity: 0.8;
@@ -202,42 +207,3 @@
   }
 }
 
-/* Site-wide animated background used by layout.js */
-.site-bg {
-  position: absolute;
-  inset: 0;
-  z-index: -10;
-  background-color: #071029; /* fallback */
-  background-image:
-    radial-gradient(600px 400px at 10% 10%, rgba(255,186,89,0.06), transparent 15%),
-    radial-gradient(500px 400px at 90% 85%, rgba(99,102,241,0.06), transparent 15%),
-    linear-gradient(180deg, rgba(7,10,41,0.9) 0%, rgba(4,6,20,0.95) 100%);
-  background-repeat: no-repeat;
-  background-size: 120% 120%, 120% 120%, 100% 100%;
-  animation: site-bg-pan 20s linear infinite;
-  will-change: background-position;
-}
-
-@keyframes site-bg-pan {
-  0% {
-    background-position: 0% 50%, 100% 50%, 0% 0%;
-  }
-  50% {
-    background-position: 100% 50%, 0% 50%, 0% 0%;
-  }
-  100% {
-    background-position: 0% 50%, 100% 50%, 0% 0%;
-  }
-}
-
-/* Slight noise overlay for texture (subtle) */
-.site-bg::after{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size: 3px 3px;
-  mix-blend-mode: overlay;
-  opacity: 0.6;
-  pointer-events: none;
-}

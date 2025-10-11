@@ -256,7 +256,7 @@ export default function GuestPanel() {
     e.stopPropagation();
     // Open WhatsApp in new tab/window
     const phoneNumber = hall.phone.replace(/\D/g, ""); // remove any non-numeric characters
-    const url = `https://wa.me/${phoneNumber}`;
+    const url = `https://wa.me/${91+phoneNumber}`;
     window.open(url, "_blank", "noopener,noreferrer");
   }}
   className="mt-3 bg-green-500 hover:bg-green-600 text-white font-medium py-2 rounded-md transition"

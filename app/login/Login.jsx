@@ -6,7 +6,7 @@ import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-const Login = ({ isFlipped, setIsFlipped, hover }) => {
+const Login = ({ isFlipped, setIsFlipped }) => {
   const { data: session, status } = useSession();
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -19,7 +19,6 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
 
   const router = useRouter();
 
-  // Handle email input validation
   const valloginEmail = (e) => {
     setLoginEmail(e.target.value);
     if (e.target.value.length < 8) {
@@ -37,7 +36,6 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
     }
   };
 
-  // Handle password input validation
   const valloginPassword = (e) => {
     setLoginPassword(e.target.value);
     if (e.target.value.length < 8) {
@@ -51,7 +49,6 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
     }
   };
 
-  // Social login: save user and redirect to dynamic admin dashboard
   useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
       const saveSocialUser = async () => {
@@ -69,10 +66,9 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
           const data = await res.json();
           toast.dismiss(toastId);
 
-          if (res.ok && data.error === false && data.adminUuid) {
+          if (res.ok && data.error === false) {
             toast.success("Login successful", { theme: "dark" });
-            // Redirect to dynamic route
-            router.push(`/${data.adminUuid}`);
+            router.push(`/dashboard`);
           } else {
             toast.error(data.message || "Failed to save user ❌", { theme: "dark" });
           }
@@ -86,7 +82,6 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
     }
   }, [status, session, router]);
 
-  // Email/password login
   const login = async () => {
     if (loginPassword.length === 0) setlogpasserror("* This field is required");
     if (loginEmail.length === 0) setlogemailerror("* This field is required");
@@ -107,9 +102,9 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
         const result = await res.json();
         toast.dismiss(toastId);
 
-        if (result.error === false && result.adminUuid) {
+        if (result.error === false ) {
           toast.success("Login successful!", { theme: "dark" });
-          router.push(`/${result.adminUuid}`); // dynamic route
+          router.push(`/dashboard`);
         } else {
           toast.error(result.message || "Login failed");
         }
@@ -122,48 +117,34 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
 
   return (
     <div className="w-1/2 flex flex-col items-center justify-center">
-      <div
-        className={`text-white text-2xl font-semibold ${
-          hover ? "mb-3 animate-fade-in-center" : "mb-0"
-        }`}
-      >
-        LOGIN
-      </div>
+      <div className="text-white text-2xl font-semibold mb-3">LOGIN</div>
 
       {/* Email */}
-      <div
-        className={`w-[80%] mb-3 relative ${
-          !hover ? "hidden" : "animate-fade-in-center inline"
-        }`}
-      >
+      <div className="w-[80%] mb-3 relative">
         <p className="text-white text-sm pb-1">Enter your Email</p>
         <input
           value={loginEmail}
           onChange={valloginEmail}
           type="email"
           placeholder="Email"
-          className={`bg-white/20 text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
-            isvaldemail ? "focus:ring-green-400" : "focus:ring-red-400"
+          className={`bg-[#1c2541]/50 text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
+            isvaldemail ? "focus:ring-amber-400" : "focus:ring-rose-500"
           }`}
         />
         <Mail className="absolute left-3 top-8 text-gray-300" size={18} />
-        <div className="text-red-400 text-sm">{logemailerror}</div>
+        <div className="text-rose-400 text-sm">{logemailerror}</div>
       </div>
 
       {/* Password */}
-      <div
-        className={`w-[80%] mb-3 relative ${
-          !hover ? "hidden" : "inline animate-fade-in-center"
-        }`}
-      >
+      <div className="w-[80%] mb-3 relative">
         <p className="text-white text-sm pb-1">Enter your Password</p>
         <input
           value={loginPassword}
           onChange={valloginPassword}
           type={ShowPassword ? "text" : "password"}
           placeholder="Password"
-          className={`bg-white/20 w-full py-1.5 text-white rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
-            isvalidpass ? "focus:ring-green-400" : "focus:ring-red-400"
+          className={`bg-[#1c2541]/50 w-full py-1.5 text-white rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
+            isvalidpass ? "focus:ring-amber-400" : "focus:ring-rose-500"
           }`}
         />
         <KeyRound className="absolute left-3 top-8 text-gray-300" size={18} />
@@ -174,14 +155,12 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
         >
           {!ShowPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
-        <p className="text-red-400 mt-1 text-sm">{logpasserror}</p>
+        <p className="text-rose-400 mt-1 text-sm">{logpasserror}</p>
       </div>
 
       {/* Forgot Password */}
       <div
-        className={`text-gray-300 hover:text-white mb-2 ${
-          !hover ? "hidden" : "animate-fade-in-center inline"
-        }`}
+        className="text-gray-300 hover:text-white mb-2 cursor-pointer"
         onClick={() => setIsFlipped(true)}
       >
         Forgot Password?
@@ -190,10 +169,8 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
       {/* Login Button */}
       <button
         className={`w-[50%] py-1.5 text-white rounded-2xl text-lg ${
-          !hover ? "hidden" : "animate-fade-in-center inline"
-        } ${
           validcred
-            ? "bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90"
+            ? "bg-gradient-to-r from-amber-400 to-rose-500 hover:opacity-90"
             : "bg-gray-600 cursor-not-allowed"
         }`}
         onClick={login}
@@ -202,22 +179,20 @@ const Login = ({ isFlipped, setIsFlipped, hover }) => {
       </button>
 
       {/* Social Login */}
-      <div className={`text-white/80 my-2 ${!hover ? "hidden" : "animate-fade-in-center inline"}`}>
-        or continue with
-      </div>
-      <div className={`${!hover ? "hidden" : "animate-fade-in-center inline"}`}>
+      <div className="text-white/80 my-2">or continue with</div>
+      <div className="flex items-center justify-center gap-5">
         {!session ? (
-          <div className="flex items-center justify-center gap-5">
+          <>
             <button onClick={() => signIn("github")}>
-              <FaGithub className="bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800" size={35} />
+              <FaGithub className="bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70" size={35} />
             </button>
             <button onClick={() => signIn("google")}>
-              <FaGoogle className="bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800" size={35} />
+              <FaGoogle className="bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70" size={35} />
             </button>
             <button onClick={() => signIn("facebook")}>
-              <FaFacebookF className="bg-gray-200/10 p-2 rounded-full text-white/80 hover:bg-gray-800" size={35} />
+              <FaFacebookF className="bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70" size={35} />
             </button>
-          </div>
+          </>
         ) : (
           <>
             <p className="text-white">{session.user.email}</p>

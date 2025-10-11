@@ -8,7 +8,7 @@ import Stairs from "./component/Staris";
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased relative min-h-screen">
+      <body className=" relative min-h-screen">
         <link rel="icon" href="/logo.jpg" />
   <div className="site-bg" />
         <SessionProvider>
