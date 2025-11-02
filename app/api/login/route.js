@@ -22,11 +22,8 @@ export async function POST(request) {
 
     // Success: return UUID for dynamic routing
     return NextResponse.json({
-      error: false,
-      message: "Login successful",
-      adminUuid: user.id, // <-- use UUID from DB
-      username: user.username,
-      email: user.email
+      error:false,
+     usr:user
     });
 
   } catch (error) {

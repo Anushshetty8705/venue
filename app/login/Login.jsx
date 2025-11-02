@@ -1,52 +1,48 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
-import { Eye, EyeOff, Mail, KeyRound } from "lucide-react";
-import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {  Mail, KeyRound, EyeOff ,Eye} from "lucide-react";
+import { FaFacebookF, FaGoogle, FaGithub } from "react-icons/fa";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useEffect,useState } from "react";
+import { useRouter } from "next/navigation";
 
-const Login = ({ isFlipped, setIsFlipped }) => {
+export default function App({ setIsFlipped }) {
   const { data: session, status } = useSession();
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [logemailerror, setlogemailerror] = useState("");
-  const [logpasserror, setlogpasserror] = useState("");
-  const [ShowPassword, setShowPassword] = useState(false);
-  const [isvaldemail, setisvaldemail] = useState(false);
-  const [isvalidpass, setisvalidpass] = useState(false);
-  const [validcred, setvalidcred] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting},
+  } = useForm();
 
+
+  
   const router = useRouter();
 
-  const valloginEmail = (e) => {
-    setLoginEmail(e.target.value);
-    if (e.target.value.length < 8) {
-      setlogemailerror("Email must be at least 8 chars");
-      setisvaldemail(false);
-      setvalidcred(false);
-    } else if (!e.target.value.endsWith("@gmail.com")) {
-      setisvaldemail(false);
-      setlogemailerror("Invalid email (must end with @gmail.com)");
-      setvalidcred(false);
-    } else {
-      setisvaldemail(true);
-      setvalidcred(true);
-      setlogemailerror("");
-    }
-  };
+  const onSubmit = async (data) => {
+     try {
+        const toastId = toast.loading("Logging in...");
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: data.email, password: data.password }),
+        });
+        const result = await res.json();
+        toast.dismiss(toastId);
 
-  const valloginPassword = (e) => {
-    setLoginPassword(e.target.value);
-    if (e.target.value.length < 8) {
-      setisvalidpass(false);
-      setlogpasserror("Password must be at least 8 chars");
-      setvalidcred(false);
-    } else {
-      setisvalidpass(true);
-      setlogpasserror("");
-      setvalidcred(true);
-    }
+        if (result.error === false ) {
+          toast.success("Login successful!", { theme: "dark" });
+            router.push(`/${result.usr.adminUuid}`);
+        } else {
+          toast.error(result.message || "Login failed");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Something went wrong ❌");
+      }
   };
 
   useEffect(() => {
@@ -68,9 +64,11 @@ const Login = ({ isFlipped, setIsFlipped }) => {
 
           if (res.ok && data.error === false) {
             toast.success("Login successful", { theme: "dark" });
-            router.push(`/dashboard`);
+             router.push(`/${data.adminUuid}`);
           } else {
-            toast.error(data.message || "Failed to save user ❌", { theme: "dark" });
+            toast.error(data.message || "Failed to save user ❌", {
+              theme: "dark",
+            });
           }
         } catch (err) {
           console.error("Error saving user:", err);
@@ -82,128 +80,114 @@ const Login = ({ isFlipped, setIsFlipped }) => {
     }
   }, [status, session, router]);
 
-  const login = async () => {
-    if (loginPassword.length === 0) setlogpasserror("* This field is required");
-    if (loginEmail.length === 0) setlogemailerror("* This field is required");
-
-    if (
-      loginPassword.length >= 8 &&
-      loginEmail.length >= 8 &&
-      loginEmail.endsWith("@gmail.com")
-    ) {
-      setvalidcred(true);
-      try {
-        const toastId = toast.loading("Logging in...");
-        const res = await fetch("/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: loginEmail, password: loginPassword }),
-        });
-        const result = await res.json();
-        toast.dismiss(toastId);
-
-        if (result.error === false ) {
-          toast.success("Login successful!", { theme: "dark" });
-          router.push(`/dashboard`);
-        } else {
-          toast.error(result.message || "Login failed");
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("Something went wrong ❌");
-      }
-    }
-  };
-
   return (
-    <div className="w-1/2 flex flex-col items-center justify-center">
-      <div className="text-white text-2xl font-semibold mb-3">LOGIN</div>
-
-      {/* Email */}
-      <div className="w-[80%] mb-3 relative">
-        <p className="text-white text-sm pb-1">Enter your Email</p>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col  max-w-md w-80 mx-auto relative px-5 items-center justify-center gap-2"
+    >
+      <div className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500 text-2xl fo mb-2 font-extrabold">LOGIN</div>
+     
+      <div className="relative w-full">
+         <p className="text-gray-300 text-sm pb-1 w-full text-start">
+        Enter your Email
+      </p>
         <input
-          value={loginEmail}
-          onChange={valloginEmail}
           type="email"
-          placeholder="Email"
-          className={`bg-[#1c2541]/50 text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
-            isvaldemail ? "focus:ring-amber-400" : "focus:ring-rose-500"
-          }`}
+          autoFocus
+          placeholder="Enter email"
+          {...register("email", {
+            required: "Email is required",
+            minLength: { value: 8, message: "Email 8 characters" },
+            validate: (value) =>
+              value.endsWith("@gmail.com") || "Email must be a Gmail address",
+          })}
+          className="p-2 border-b-2  border-b-blue-500  focus:outline-none relative  text-white w-[100%] py-1.5  px-8 placeholder-gray-300 rounded-xl "
         />
-        <Mail className="absolute left-3 top-8 text-gray-300" size={18} />
-        <div className="text-rose-400 text-sm">{logemailerror}</div>
+        <Mail className=" left-3 bottom-2.5 absolute text-gray-300" size={18} />
       </div>
+      {errors.email && (
+        <span className="text-red-500 w-full text-start">
+          {errors.email.message}
+        </span>
+      )}
 
-      {/* Password */}
-      <div className="w-[80%] mb-3 relative">
-        <p className="text-white text-sm pb-1">Enter your Password</p>
+     
+      <div className="relative w-full">
+         <p className="text-gray-300 text-sm pb-1 w-full text-start">
+        Enter your Password
+      </p>
         <input
-          value={loginPassword}
-          onChange={valloginPassword}
-          type={ShowPassword ? "text" : "password"}
-          placeholder="Password"
-          className={`bg-[#1c2541]/50 w-full py-1.5 text-white rounded-xl px-8 placeholder-gray-300 focus:outline-none focus:ring-2 ${
-            isvalidpass ? "focus:ring-amber-400" : "focus:ring-rose-500"
-          }`}
+              type={showPassword ? "text" : "password"}
+          placeholder="Enter password"
+          {...register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+          })}
+          className="p-2  relative border-b-3  border-b-blue-500  focus:outline-none text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 "
         />
-        <KeyRound className="absolute left-3 top-8 text-gray-300" size={18} />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!ShowPassword)}
-          className="absolute right-3 top-8 text-gray-300"
-        >
-          {!ShowPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-        </button>
-        <p className="text-rose-400 mt-1 text-sm">{logpasserror}</p>
+        <KeyRound
+          className=" left-3 bottom-3 absolute text-gray-300"
+          size={18}
+        />
+       <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute right-3 bottom-2.5 text-gray-300 hover:text-white"
+      >
+        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
       </div>
+      {errors.password && (
+        <span className="text-red-500 w-full text-start ">
+          {errors.password.message}
+        </span>
+      )}
 
-      {/* Forgot Password */}
       <div
-        className="text-gray-300 hover:text-white mb-2 cursor-pointer"
+        className="text-gray-300 hover:text-white cursor-pointer"
         onClick={() => setIsFlipped(true)}
       >
         Forgot Password?
       </div>
 
-      {/* Login Button */}
       <button
-        className={`w-[50%] py-1.5 text-white rounded-2xl text-lg ${
-          validcred
-            ? "bg-gradient-to-r from-amber-400 to-rose-500 hover:opacity-90"
+        type="submit"
+         disabled={isSubmitting}
+         className={`w-[40%] py-1.5 text-white rounded-2xl text-lg ${
+        errors ? "bg-gradient-to-r from-amber-400 to-rose-500 hover:opacity-90"
             : "bg-gray-600 cursor-not-allowed"
         }`}
-        onClick={login}
       >
-        Login
+        Logn
       </button>
-
-      {/* Social Login */}
-      <div className="text-white/80 my-2">or continue with</div>
-      <div className="flex items-center justify-center gap-5">
-        {!session ? (
+      <div className="text-white/80 ">or continue with</div>
+      <div className="flex items-center justify-center gap-5 mt-1.5">
+        {!session && (
           <>
             <button onClick={() => signIn("github")}>
-              <FaGithub className="bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70" size={35} />
+              <FaGithub
+                className="hi bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70"
+                size={35}
+              />
             </button>
             <button onClick={() => signIn("google")}>
-              <FaGoogle className="bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70" size={35} />
+              <FaGoogle
+                className="hi bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70"
+                size={35}
+              />
             </button>
             <button onClick={() => signIn("facebook")}>
-              <FaFacebookF className="bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70" size={35} />
-            </button>
-          </>
-        ) : (
-          <>
-            <p className="text-white">{session.user.email}</p>
-            <button onClick={() => signOut()} className="text-white">
-              Sign out
+              <FaFacebookF
+                className="hi bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70"
+                size={35}
+              />
             </button>
           </>
         )}
       </div>
-    </div>
+    </form>
   );
-};
-
-export default Login;
+}

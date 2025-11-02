@@ -16,7 +16,7 @@ export async function POST(request) {
       return NextResponse.json({
         error: false,
         message: "login",
-        adminUuid: user.id,
+        adminUuid: user.adminUuid,
         username: user.username,
         email: user.email,
       });
@@ -27,7 +27,7 @@ export async function POST(request) {
       username: body.username,
       email: body.email,
       AuthProvider: body.Authprovider,
-      id: uuidv4(),
+      adminUuid: uuidv4(),
     };
 
     await collection.insertOne(newUser);

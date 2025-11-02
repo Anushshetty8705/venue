@@ -8,7 +8,7 @@ export async function POST(request) {
   const db = cilent.db("Banquet");
   const collection = db.collection("users");
   const existingUser = await collection.findOne({ email: body.email });
-
+console.log(existingUser)
   if (existingUser) {
     // Email already exists, do not create another user
     return Response.json({ error: "true", message: "Email exists" });
@@ -21,6 +21,6 @@ export async function POST(request) {
     image:"",
     adminUuid:uuidv4()
   });
-
-  return Response.json({ error: "false", message: "Success" });
+  const user = await collection.findOne({ email: body.email });
+  return Response.json({ error: "false", message: "Success" ,usr:user})
 }

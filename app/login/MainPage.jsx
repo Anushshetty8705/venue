@@ -8,13 +8,13 @@ const MainPage = ({ isFlipped, setIsFlipped }) => {
 
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-900">
+    <div className="flex items-center justify-center h-screen">
       {/* Outer container */}
-      <div className={`animate-fade-in-center bg-black rounded-[50px] w-[55%] relative flex items-center justify-center border-8 border-black transition-all duration-700 ease-in-out h-[80vh]`}>
+   
         {/* Inner content container */}
         <div 
          
-           className={`box border-4 border-gray-800 w-[50vw] flex fixed transition-all duration-700 ease-in-out rounded-4xl z-10 bg-white/10 overflow-hidden   h-[70vh]`}
+           className={` border-2  border-blue-500   w-[50vw] flex fixed transition-all duration-700 ease-in-out rounded-4xl z-10  bg-[#3a506b]/20 overflow-hidden   h-[70vh]`}
             >
           {/* Login / Register component */}
           {!active ? (
@@ -25,7 +25,7 @@ const MainPage = ({ isFlipped, setIsFlipped }) => {
 
           {/* Hover panel */}
            <div
-            className={`   w-1/2 bg-gray-700 cursor-pointer transition-all duration-500 rounded-l-[70px] `}
+            className={`   w-1/2 bg-[#3a506b]/30 cursor-pointer transition-all duration-500 rounded-l-[70px] `}
           >
             <div
               className={`flex flex-col items-center justify-center h-full gap-3 transition-opacity duration-300 `}
@@ -40,7 +40,7 @@ const MainPage = ({ isFlipped, setIsFlipped }) => {
                   : "Already have an account?"}
               </span>
               <button
-                className={`px-10 py-2 rounded-full text-white text-[14px] bg-gradient-to-r from-red-400 to-pink-500 hover:opacity-90 `}
+                className={`px-10 py-2 rounded-full text-white text-[14px]  bg-gradient-to-r from-amber-500 to-rose-500 `}
                 onClick={() => setActive(!active)}
               >
                 {!active ? "Register" : "Login"}
@@ -50,7 +50,7 @@ const MainPage = ({ isFlipped, setIsFlipped }) => {
         </div>
        
       </div>
-    </div>
+    
   );
 };
 

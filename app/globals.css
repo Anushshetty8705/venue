@@ -1,5 +1,13 @@
 @import "tailwindcss";
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
 
+/* Also helps for WebKit browsers (just in case) */
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none;
+}
 
 body {
   background: #0b132b

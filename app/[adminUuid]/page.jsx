@@ -1,5 +1,5 @@
 "use client";
-
+import { useSession, signIn, signOut } from "next-auth/react";
 import React, { useState, useRef,useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -54,6 +54,7 @@ export default function DashboardPage({ params }) {
  
   if( confirm("🏫Leavng so soon"))
   {
+    signOut()
   toast.success("Loged out")
     setMode("");
     setAdminId(null);

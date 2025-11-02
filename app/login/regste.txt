@@ -162,10 +162,10 @@ setsendsubmt(true)
 
   const onSubmit = (data) =>{
      console.log(sverfed)
-    // if(data.email!==verfedemal && sverfed===false){
-    //       toast.error("Verfy emal frst");
-    //       return;
-    // }
+    if(data.email!==verfedemal && sverfed===false){
+          toast.error("Verfy emal frst");
+          return;
+    }
      console.log(sverfed)
     const toastId = toast.loading("Signing.....");
       fetch("/api/register", {

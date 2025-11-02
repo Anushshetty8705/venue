@@ -124,7 +124,7 @@ export default function Home() {
                   onClick={() => setActiveSection(key)}
                   className={`transition-all ${
                     activeSection === key
-                      ? "text-amber-400 underline underline-offset-4"
+                      ? "z underline underline-offset-4"
                       : "text-gray-400 hover:text-white"
                   }`}
                 >
@@ -137,7 +137,7 @@ export default function Home() {
                 href="/login"
                 className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-md hover:scale-105 transition-transform"
               >
-                Dashboard
+            login
               </Link>
             </li>
           </ul>
