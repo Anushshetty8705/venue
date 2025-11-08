@@ -14,12 +14,6 @@ body {
 
 }
 
-.hi{color: white;
-
-  opacity: 0.8;
-  transition: transform 0.3s ease-in-out; /* Apply transition to the transform property */
-}
-
 /* Hide scrollbar but keep scrolling */
 .scroll-bar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
@@ -29,29 +23,25 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-
+.hi{
+transition:transform 0.5s ease-in-out;
+}
 .hi:hover {
   color: rgb(120, 176, 244);
   opacity: 0.9;
-
-  transform:  scale(1.5);           /* Scale up uniformly */
+  transform:  scale(1.4);           /* Scale up uniformly */
 }
 .bg-neutral-600 {
     background-color: var(--color-neutral-600) /* oklch(43.9% 0 0) = #525252 */;
     opacity: 0.8;
 }
-.box1{
- box-shadow: 2px 2px 30px 2px rgb(182, 15, 137);
+.input{
+ border-bottom:3px solid blue;
 }
-.box:hover{
- box-shadow: 2px 2px 30px 2px green;
+.input:focus{
+  outline: none;
 }
-.box{
- box-shadow: 2px 2px 30px 2px red;
-}
-.box2{
- box-shadow: 2px 2px 30px 2px rgba(241, 246, 241, 0.31);
-}
+
 .calendar-dark {
   background-color: #0c69eb !important; /* dark gray */
   color: #d1d5db !important; /* light text */
@@ -160,58 +150,4 @@ body {
   background: transparent !important;;  /* remove hover effect */
 }
 
-@layer utilities {
-  @keyframes fade-in-center {
-    0% {
-      opacity: 0;
-      transform: translateX(0) scale(0.0);
-    }
-    
-    100% {
-      opacity: 1;
-      transform:translate3d(0) scale(1);
-    }
-  }
-
-  .animate-fade-in-center {
-    animation: fade-in-center 2s ease-in-out ;
-  }
-}
-
-
-
-@layer utilities {
-  @keyframes fade-in-up {
-    0% {
-      opacity: 0;
-      transform: translateY(-100vh) scale(0.0);
-    }
-
-    100% {
-      opacity: 1;
-      transform:translateY(0) scale(1);
-    }
-  }
-
-  .animate-fade-in-up {
-    animation: fade-in-up 2s ease-in-out ;
-  }
-}
-@layer utilities {
-  @keyframes fade-in-down {
-    0% {
-      opacity: 0;
-      transform: translateY(100vh) scale(0.0);
-    }
-
-    100% {
-      opacity: 1;
-      transform:translateY(0) scale(1);
-    }
-  }
-
-  .animate-fade-in-down {
-    animation: fade-in-down 2s ease-in-out ;
-  }
-}
 

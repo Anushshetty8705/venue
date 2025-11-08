@@ -126,7 +126,7 @@ export default function App({ setIsFlipped }) {
               message: "Password must be at least 8 characters",
             },
           })}
-          className="p-2  relative border-b-3  border-b-blue-500  focus:outline-none text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 "
+          className="p-2  relative input text-white w-full py-1.5 rounded-xl px-8 placeholder-gray-300 "
         />
         <KeyRound
           className=" left-3 bottom-3 absolute text-gray-300"

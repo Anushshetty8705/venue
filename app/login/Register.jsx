@@ -197,7 +197,7 @@ setsendsubmt(true)
       onSubmit={handleSubmit(onSubmit)}
       className="h-full w-1/2 flex flex-col items-center justify-center gap-1.5 relative px-5 rounded-2xl shadow-lg text-white "
     >
-      <div className=" text-xl font-bold ">REGISTER</div>
+      <div className=" text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500">REGISTER</div>
       {/* username */}
       <div className="relative w-full">
         <p className="text-gray-300 pb-1 w-full text-start text-sm ">
@@ -206,7 +206,7 @@ setsendsubmt(true)
         <input
           type="text"
           placeholder="Enter your Username"
-          className={`bg-[#1e293b] w-full py-1.5 text-white placeholder-gray-400 rounded-xl px-8 `}
+          className={`input w-full py-1.5 text-white placeholder-gray-400 rounded-xl px-8 `}
           {...register("username", {
             required: "Username is required",
             minLength: {
@@ -234,7 +234,7 @@ setsendsubmt(true)
             <div className="flex w-full gap-2">
               <input
                 type="email"
-                className={`bg-[#1e293b] text-white w-full placeholder-gray-400 rounded-xl px-8 py-1.5 focus:outline-none focus:ring-2 `}
+                className={` text-white w-full placeholder-gray-400 rounded-xl px-8 py-1.5 input `}
                 placeholder="Enter email"
                 {...register("email", {
                   required: "Email is required",
@@ -251,7 +251,7 @@ setsendsubmt(true)
                 }}
                 className={`px-3 rounded-xl text-white text-[12px] ${
                   !errors.email
-                    ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90"
+                    ? "bg-gradient-to-r from-amber-400 to-rose-500 hover:opacity-90"
                     : "bg-gray-600 cursor-not-allowed"
                 }`}
           
@@ -271,7 +271,7 @@ setsendsubmt(true)
               <input
                 type="number"
                 placeholder="Enter your OTP"
-                className={`bg-[#1e293b] w-full py-1.5 text-white placeholder-gray-400 rounded-xl px-8 `}
+                className={`input w-full py-1.5 text-white placeholder-gray-400 rounded-xl px-8 `}
                 {...register("otp", {
                   required: "OTP is required",
                   validate: (value) => {
@@ -287,7 +287,7 @@ setsendsubmt(true)
                 }
                 className={`px-3 rounded-xl text-white text-[12px] ${
                   !errors.otp
-                    ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90"
+                    ? "bg-gradient-to-r from-amber-400 to-rose-500 hover:opacity-90"
                     : "bg-gray-600 cursor-not-allowed"
                 }`}
               >
@@ -315,7 +315,7 @@ setsendsubmt(true)
         <input
             type={ShowPassword ? "text" : "password"}
           placeholder="Enter your password"
-          className={`bg-[#1e293b] w-full py-1.5 text-white placeholder-gray-400 rounded-xl px-8 `}
+          className={`input w-full py-1.5 text-white placeholder-gray-400 rounded-xl px-8 `}
           {...register("password", {
           required: "Password is required",
           minLength: {
@@ -343,7 +343,7 @@ setsendsubmt(true)
       <button
         type="submit"
         disabled={isSubmitting}
-        className={`w-[40%] py-1.5 text-white rounded-2xl text-md bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 ${
+        className={`w-[40%] py-1.5 text-white rounded-2xl text-md bg-gradient-to-r from-amber-400 to-rose-500 hover:opacity-90 ${
           !errors && 
              "bg-gray-600 cursor-not-allowed"
         }`}
