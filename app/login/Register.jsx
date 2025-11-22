@@ -124,8 +124,9 @@ setsendsubmt(true)
       toast.error("Please enter your OTP ❌");
       return;
     }
-    
-    try {
+    if(datas.otp.length ===6){
+      toast.info("Verifying OTP...");
+       try {
       setsverfed(true)
       document.button.disabled = true;
       const res = await fetch("/api/verify-otp", {
@@ -157,16 +158,18 @@ setsendsubmt(true)
         theme: "dark",
       });
     }
+    }
+   
   };
   
 
   const onSubmit = (data) =>{
-     console.log(sverfed)
-    // if(data.email!==verfedemal && sverfed===false){
-    //       toast.error("Verfy emal frst");
-    //       return;
-    // }
-     console.log(sverfed)
+ 
+    if(data.email!==verfedemal && sverfed===false){
+          toast.error("Verfy emal frst");
+          return;
+    }
+
     const toastId = toast.loading("Signing.....");
       fetch("/api/register", {
         method: "POST",
@@ -348,7 +351,7 @@ setsendsubmt(true)
              "bg-gray-600 cursor-not-allowed"
         }`}
       >
-        Register
+       {isSubmitting ? "Registering..." : "Register"}
       </button>
       <div className="text-white/80">or continue with</div>
       <div className="flex items-center justify-center gap-5 ">

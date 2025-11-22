@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import AdminOfflineBookings from "./AdminOfflineBookings";
-import AdminOnlineBookings from "./AdminOnlineBookings"; // 👈 make sure this file exists
+import AdminOfflineBookings from "./AdminOfflineBookings"; // 👈 make sure this file exists
 import { toast } from "react-toastify";
 
 export default function AdminDashboard({ adminUuid }) {

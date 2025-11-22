@@ -2,9 +2,29 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-export default function Gallery({ images = [] }) {
+export default function Gallery() {
+   const images = [{
+    src:"https://tse2.mm.bing.net/th/id/OIP.nxDj_JyPUEfc8YjBgO0RnAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3",
+  name:"sarji",
+location:"shimoga"},
+{
+    src:"https://www.royalorchidhotels.com/Images/slider/14_21_2019_01_21_3421.jpg",
+  name:"saji",
+location:"benagalutru"}
+,
+{
+    src:"https://www.royalorchidhotels.com/Images/slider/14_21_2019_01_21_3421.jpg",
+  name:"saji",
+location:"benagalutru"}
+,
+{
+    src:"https://www.royalorchidhotels.com/Images/slider/14_21_2019_01_21_3421.jpg",
+  name:"saji",
+location:"benagalutru"}
+  ];
   return (
-    <section className="relative min-h-[90vh] py-20 px-6 lg:px-24 text-white overflow-hidden bg-[#0b132b]">
+
+    <section className="relative min-h-[85vh] py-20  lg:px-24 text-white overflow-hidden bg-[#0b132b]">
       {/* 🔮 Glowing Background Orbs */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute w-[500px] h-[500px] bg-[#1c2541]/30 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
@@ -36,12 +56,15 @@ export default function Gallery({ images = [] }) {
             className="relative overflow-hidden rounded-2xl backdrop-blur-md bg-[#1c2541]/40 border border-white/10 shadow-xl hover:shadow-2xl group"
           >
             <img
-              src={src}
+              src={src.src}
               alt={`gallery-${i}`}
               className="w-full h-56 object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110"
             />
             {/* Gradient Overlay on Hover */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-[#0b132b]/90 via-transparent to-transparent transition-opacity duration-500"></div>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-[#0b132b]/90 via-transparent to-transparent transition-opacity duration-500 flex flex-col justify-end p-4">
+            <div className="text-white font-semibold">{src.name}</div>
+             <div className="text-white font-semibold">{src.location}</div>
+            </div>
           </motion.div>
         ))}
       </motion.div>

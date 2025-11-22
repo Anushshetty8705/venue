@@ -1,7 +1,6 @@
 "use client";
 import { useSession, signIn, signOut } from "next-auth/react";
 import React, { useState, useRef,useEffect } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { use } from "react";
 // Components
@@ -47,7 +46,7 @@ export default function DashboardPage({ params }) {
     setShowEditProfile(false);
     alert("Profile updated successfully!");
   };
-
+const router = useRouter();
   // Logout
   const onLogout = () => {
     
@@ -55,6 +54,7 @@ export default function DashboardPage({ params }) {
   if( confirm("🏫Leavng so soon"))
   {
     signOut()
+      router.push(`/`);
   toast.success("Loged out")
     setMode("");
     setAdminId(null);
@@ -115,8 +115,8 @@ export default function DashboardPage({ params }) {
 
       if (result.success) {
         toast.dismiss()
+            signOut()
         toast.success("Profile deleted!");
-        onLogout();
         setProfileOpen(false);
         route.push("/")
       } else {

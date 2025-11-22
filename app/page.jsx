@@ -2,12 +2,17 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Gallery from "./component/Gallery";
 import Contact from "./component/Contact";
 import About from "./component/About";
 
 export default function Home() {
-  const images = ["/venue1.jpg", "/venue2.jpg", "/venue3.jpg", "/venue4.jpg"];
+  const images = ["https://tse2.mm.bing.net/th/id/OIP.nxDj_JyPUEfc8YjBgO0RnAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+    ,"https://www.royalorchidhotels.com/Images/slider/14_21_2019_01_21_3421.jpg"
+      ,"https://www.royalorchidhotels.com/Images/slider/14_21_2019_01_21_3421.jpg"
+        ,"https://www.royalorchidhotels.com/Images/slider/14_21_2019_01_21_3421.jpg"
+  ];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeSection, setActiveSection] = useState("home");
   const [navSolid, setNavSolid] = useState(false);
@@ -25,18 +30,20 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  const router=useRouter();
 
   function renderSection() {
     switch (activeSection) {
       case "gallery":
-        return <Gallery images={images} />;
+        return <Gallery  />;
       case "contact":
         return <Contact />;
       case "about":
-        return <About />;
+        return <About setActiveSection={setActiveSection} />;
+
       default:
         return (
-          <section className="relative w-full h-[85vh] overflow-hidden bg-[#0b132b] flex items-center justify-center">
+          <section className="relative w-full h-[75vh] overflow-hidden bg-[#0b132b] flex items-center justify-center">
             {/* Background slideshow */}
             {images.map((src, i) => (
               <img
@@ -50,18 +57,18 @@ export default function Home() {
             ))}
 
             {/* Glowing background orbs */}
-            <div className="absolute w-[400px] h-[400px] bg-[#1c2541]/30 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
-            <div className="absolute w-[350px] h-[350px] bg-[#3a506b]/20 rounded-full blur-3xl bottom-10 right-10 animate-pulse"></div>
+            <div className="absolute w-[400px] h-[400px] bg-[#1c2541]/50 rounded-full blur-3xl  left-10 animate-pulse"></div>
+            <div className="absolute w-[350px] h-[350px] bg-[#3a506b]/20 rounded-full blur-3xl  right-10 animate-pulse"></div>
 
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#0b132b]/80 to-[#0b132b]" />
-
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-[#0b132b]/30 to-[#0b132b]" />
+ 
             {/* Hero Text */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}
-              className="relative z-10 text-center px-6"
+              className="relative z-10 text-center "
             >
               <h1 className="text-6xl md:text-7xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500">
                 VenueVista
@@ -70,14 +77,14 @@ export default function Home() {
                 Discover exquisite venues that make your events unforgettable — book with confidence.
               </p>
               <div className="flex justify-center gap-4 flex-wrap">
-                <Link
-                  href="/login"
+                <button
+                    onClick={() => router.push('/login')}
                   className="px-8 py-3 rounded-full text-white bg-gradient-to-r from-amber-500 to-rose-500 font-semibold shadow-lg hover:scale-105 transition-transform"
                 >
                   Explore Venues
-                </Link>
+                </button>
                 <button
-                  onClick={() => setActiveSection("about")}
+                  onClick={() => router.push('/')}
                   className="px-8 py-3 rounded-full border border-white/10 backdrop-blur-lg bg-[#1c2541]/60 text-gray-200 hover:bg-[#3a506b]/60 shadow-lg hover:scale-105 transition-transform"
                 >
                   Learn More
@@ -145,7 +152,7 @@ export default function Home() {
       </nav>
 
       {/* Main */}
-      <main className="min-h-screen bg-[#0b132b] text-white">{renderSection()}</main>
+      <main className="min-h-[85vh] bg-[#0b132b] text-white">{renderSection()}</main>
 
       {/* Footer */}
     

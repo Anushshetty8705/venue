@@ -63,6 +63,7 @@ export default function App({ setIsFlipped }) {
           toast.dismiss(toastId);
 
           if (res.ok && data.error === false) {
+            console.log("Social user saved:", data);
             toast.success("Login successful", { theme: "dark" });
              router.push(`/${data.adminUuid}`);
           } else {
@@ -101,7 +102,7 @@ export default function App({ setIsFlipped }) {
             validate: (value) =>
               value.endsWith("@gmail.com") || "Email must be a Gmail address",
           })}
-          className="p-2 border-b-2  border-b-blue-500  focus:outline-none relative  text-white w-[100%] py-1.5  px-8 placeholder-gray-300 rounded-xl "
+          className="p-2 input  focus:outline-none relative  text-white w-[100%] py-1.5  px-8 placeholder-gray-300 rounded-xl "
         />
         <Mail className=" left-3 bottom-2.5 absolute text-gray-300" size={18} />
       </div>
@@ -161,7 +162,7 @@ export default function App({ setIsFlipped }) {
             : "bg-gray-600 cursor-not-allowed"
         }`}
       >
-        Logn
+        {isSubmitting ? "Logging in..." : "Login"}
       </button>
       <div className="text-white/80 ">or continue with</div>
       <div className="flex items-center justify-center gap-5 mt-1.5">

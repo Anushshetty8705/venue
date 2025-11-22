@@ -202,9 +202,9 @@ const Page = ({ isFlipped, setIsFlipped }) => {
     
         <div
          
-          className={` relative z-10 border-2  border-blue-500 bg-[#3a506b]/20 rounded-2xl w-[40%] sm:w-[400px] flex flex-col items-center justify-center
-            transition-all duration-700 ease-in-out  
-            ${hover ? "scale-105 brightness-110 shadow-xl h-[65vh] p-10 my-10" : "scale-100 brightness-100 shadow-md h-[5vh] p-8 my-5"}`}
+          className={`relative z-10 border-2  border-blue-500 bg-[#3a506b]/20 rounded-2xl  sm:w-[400px] flex flex-col items-center justify-center
+            transition-all duration-700 ease-in-out  h-[65vh] 
+           `}
         >
           <h1 className={` text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500`}>
             Reset Password

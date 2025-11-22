@@ -8,7 +8,7 @@ const MainPage = ({ isFlipped, setIsFlipped }) => {
 
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-[100%]">
       {/* Outer container */}
    
         {/* Inner content container */}
