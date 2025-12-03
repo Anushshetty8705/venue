@@ -84,7 +84,7 @@ export default function Home() {
                   Explore Venues
                 </button>
                 <button
-                  onClick={() => router.push('/')}
+                  onClick={() => setActiveSection("about")}
                   className="px-8 py-3 rounded-full border border-white/10 backdrop-blur-lg bg-[#1c2541]/60 text-gray-200 hover:bg-[#3a506b]/60 shadow-lg hover:scale-105 transition-transform"
                 >
                   Learn More

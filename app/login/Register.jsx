@@ -124,11 +124,14 @@ setsendsubmt(true)
       toast.error("Please enter your OTP ❌");
       return;
     }
+    if(datas.otp.length <6 ){
+      toast.error("OTP must be 6 digits ❌");
+      return;
+    }
     if(datas.otp.length ===6){
       toast.info("Verifying OTP...");
        try {
       setsverfed(true)
-      document.button.disabled = true;
       const res = await fetch("/api/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
