@@ -49,12 +49,9 @@ export default function DashboardPage({ params }) {
 const router = useRouter();
   // Logout
   const onLogout = () => {
-    
- 
   if( confirm("🏫Leavng so soon"))
   {
-    signOut()
-      router.push(`/`);
+   signOut({ callbackUrl: '/' }) 
   toast.success("Loged out")
     setMode("");
     setAdminId(null);
@@ -115,10 +112,9 @@ const router = useRouter();
 
       if (result.success) {
         toast.dismiss()
-            signOut()
+         signOut({ callbackUrl: '/' })
         toast.success("Profile deleted!");
         setProfileOpen(false);
-        route.push("/")
       } else {
         toast.error(result.error || "Something went wrong");
       }
