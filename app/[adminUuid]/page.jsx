@@ -88,7 +88,7 @@ const router = useRouter();
 
   // Admin login simulation
   const handleEnterAdmin = async () => {
-    toast.success(`enterd as admn`)
+    toast.success(`enterd as admin`)
     setMode("admin");
   };
 
@@ -97,7 +97,7 @@ const router = useRouter();
   const deleteProfile = async () => {
    
     if (!confirm("Are you sure you want to delete your profile?")) return;
-    toast.loading("deletng......")
+    toast.loading("deleting......")
     try {
       const response = await fetch(
         `/api/profile/delete?adminUuid=${adminUuid}`,

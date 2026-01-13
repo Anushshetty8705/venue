@@ -24,40 +24,40 @@ export default function App() {
   
   const { data: session, status } = useSession();
 
-  useEffect(() => {
-    if (status === "authenticated" && session?.user?.email) {
-      const saveSocialUser = async () => {
-        try {
-          const toastId = toast.loading("Logging in...");
-          const res = await fetch("/api/sociallogin", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: session.user.email,
-              username: session.user.name || "SocialUser",
-              Authprovider: "google facebook github",
-            }),
-          });
-          const data = await res.json();
-          toast.dismiss(toastId);
+  // useEffect(() => {
+  //   if (status === "authenticated" && session?.user?.email) {
+  //     const saveSocialUser = async () => {
+  //       try {
+  //         const toastId = toast.loading("Logging in...");
+  //         const res = await fetch("/api/sociallogin", {
+  //           method: "POST",
+  //           headers: { "Content-Type": "application/json" },
+  //           body: JSON.stringify({
+  //             email: session.user.email,
+  //             username: session.user.name || "SocialUser",
+  //             Authprovider: "google facebook github",
+  //           }),
+  //         });
+  //         const data = await res.json();
+  //         toast.dismiss(toastId);
 
-          if (res.ok && data.error === false) {
-            toast.success("Login successful", { theme: "dark" });
-           router.push(`/${data.adminUuid}`);
-          } else {
-            toast.error(data.message || "Failed to save user ❌", {
-              theme: "dark",
-            });
-          }
-        } catch (err) {
-          console.error("Error saving user:", err);
-          toast.error("Server error ❌", { theme: "dark" });
-        }
-      };
+  //         if (res.ok && data.error === false) {
+  //           toast.success("Login successful", { theme: "dark" });
+  //          router.push(`/${data.adminUuid}`);
+  //         } else {
+  //           toast.error(data.message || "Failed to save user ❌", {
+  //             theme: "dark",
+  //           });
+  //         }
+  //       } catch (err) {
+  //         console.error("Error saving user:", err);
+  //         toast.error("Server error ❌", { theme: "dark" });
+  //       }
+  //     };
 
-      saveSocialUser();
-    }
-  }, [status, session, router]);
+  //     saveSocialUser();
+  //   }
+  // }, [status, session, router]);
 
   //   send object emal  so used as data
   const sendOtp = async (data) => {

@@ -35,7 +35,7 @@ export async function POST(request) {
     return NextResponse.json({
       error: false,
       message: "new user",
-      adminUuid: newUser.id,
+      adminUuid: newUser.adminUuid,
       username: newUser.username,
       email: newUser.email,
     });

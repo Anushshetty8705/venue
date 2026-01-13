@@ -63,9 +63,9 @@ export default function App({ setIsFlipped }) {
           toast.dismiss(toastId);
 
           if (res.ok && data.error === false) {
-            console.log("Social user saved:", data);
+      
             toast.success("Login successful", { theme: "dark" });
-             router.push(`/${data.adminUuid}`);
+            router.push(`/${data.adminUuid}`);
           } else {
             toast.error(data.message || "Failed to save user ❌", {
               theme: "dark",
