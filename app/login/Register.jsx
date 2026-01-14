@@ -345,18 +345,17 @@ setValue("otp","")
                 size={35}
               />
             </button>
+
+
             <button onClick={() => signIn("google")}>
               <FaGoogle
                 className="hi bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70"
                 size={35}
               />
             </button>
-            <button onClick={() => signIn("facebook")}>
-              <FaFacebookF
-                className="hi bg-white/10 p-2 rounded-full text-white/80 hover:bg-[#1c2541]/70"
-                size={35}
-              />
-            </button>
+
+
+              
           </>
         )}
       </div>
