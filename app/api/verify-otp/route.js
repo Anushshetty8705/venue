@@ -1,7 +1,7 @@
 export async function POST(req) {
   try {
     const { email, otp } = await req.json();
-    console.log("Checking OTP:", { email, otp, store: global.otpStore });
+  
 
     if (
       global.otpStore &&
